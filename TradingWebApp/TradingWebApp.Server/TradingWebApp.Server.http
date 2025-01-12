@@ -1,0 +1,6 @@
+@TradingWebApp.Server_HostAddress = http://localhost:5221
+
+GET {{TradingWebApp.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
