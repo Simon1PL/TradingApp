@@ -3,19 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34928.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingHistoryImporter", "TradingHistoryImporter\TradingHistoryImporter.csproj", "{59AB70DD-2EA8-4240-87B5-C45D27910A6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingHistoryImporter", "TradingHistoryImporter\TradingHistoryImporter.csproj", "{59AB70DD-2EA8-4240-87B5-C45D27910A6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingWebApp.Server", "TradingWebApp\TradingWebApp.Server\TradingWebApp.Server.csproj", "{4738BA61-F7B7-4E22-AB8A-B7EAC249568E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingApp.AppHost", "TradingApp.AppHost\TradingApp.AppHost.csproj", "{65030586-5B7A-490B-BA68-F2F1337B9987}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingApp.AppHost", "TradingApp.AppHost\TradingApp.AppHost.csproj", "{65030586-5B7A-490B-BA68-F2F1337B9987}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingApp.ServiceDefaults", "TradingApp.ServiceDefaults\TradingApp.ServiceDefaults.csproj", "{9762036D-6A36-420D-A6B4-91DA6CE357C3}"
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "tradingwebapp.client", "TradingWebApp\tradingwebapp.client\tradingwebapp.client.esproj", "{A16D6A3D-8E86-453D-97EF-AB118D7ACAE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trading.Domain", "TradingApp.Domain\Trading.Domain.csproj", "{EDBB82FC-B046-4604-A979-E5712970DBD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Domain", "TradingApp.Domain\Trading.Domain.csproj", "{EDBB82FC-B046-4604-A979-E5712970DBD0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingApp.Persistence", "TradingApp.Persistence\TradingApp.Persistence.csproj", "{96441C94-6904-4C03-A0FF-1E627743DCE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingApp.Persistence", "TradingApp.Persistence\TradingApp.Persistence.csproj", "{96441C94-6904-4C03-A0FF-1E627743DCE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions", "AzureFunctions\AzureFunctions.csproj", "{BC76787F-31F3-4CBD-874C-B438160A4E7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{96441C94-6904-4C03-A0FF-1E627743DCE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96441C94-6904-4C03-A0FF-1E627743DCE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96441C94-6904-4C03-A0FF-1E627743DCE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC76787F-31F3-4CBD-874C-B438160A4E7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC76787F-31F3-4CBD-874C-B438160A4E7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC76787F-31F3-4CBD-874C-B438160A4E7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC76787F-31F3-4CBD-874C-B438160A4E7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
