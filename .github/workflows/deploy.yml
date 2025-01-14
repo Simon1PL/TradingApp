@@ -57,7 +57,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: ./tradingwebapp.client
+        working-directory: tradingwebapp.client
 
     steps:
       - name: 'Checkout GitHub Action'
