@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: 
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'AzureFunctions'
@@ -57,7 +57,7 @@ jobs:
       contents: read
     defaults:
       run:
-        working-directory: tradingwebapp.client
+        working-directory: ./TradingWebApp/tradingwebapp.client
 
     steps:
       - name: 'Checkout GitHub Action'
