@@ -37,6 +37,10 @@ jobs:
           UI_CHANGED=false
           WORKFLOWS_CHANGED=false
           BE_CHANGED=false
+
+          echo "Changed files:"
+          cat changed-files.txt
+
           if grep -q "^TradingWebApp/tradingwebapp.client/" changed-files.txt; then
             echo "UI project has changed"
             UI_CHANGED=true
