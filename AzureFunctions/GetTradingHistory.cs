@@ -14,9 +14,7 @@ namespace AzureFunctions
     {
         private static readonly string[] AllowedOrigins = new string[]
         {
-            "https://127.0.0.1:4200",
             "https://simon1pl.github.io",
-            "*" // TEMPORARY!
         };
 
         [FunctionName("TradingHistory")]
@@ -29,10 +27,10 @@ namespace AzureFunctions
             if (req.Method == "OPTIONS")
             {
                 string origin = req.Headers["Origin"];
-                if (AllowedOrigins.Contains(origin))
-                {
+                // if (AllowedOrigins.Contains(origin))
+                // {
                     req.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-                }
+                // }
 
                 req.HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
                 req.HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
