@@ -14,8 +14,46 @@ env:
   DOTNET_VERSION: '6.0.x'
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get list of modified files
+        run: |
+          git fetch --prune --unshallow
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed-files.txt
+          echo "Changed files:"
+          cat changed-files.txt
+
+      - name: Check if tradingwebapp.client or workflows changed
+        run: |
+          UI_CHANGED=false
+          WORKFLOWS_CHANGED=false
+          BE_CHANGED=false
+          if grep -q "^TradingWebApp/tradingwebapp.client/" changed-files.txt; then
+            echo "UI project has changed"
+            UI_CHANGED=true
+          fi
+
+          if grep -q "^.github/workflows" changed-files.txt; then
+            echo "Workflows have changed"
+            WORKFLOWS_CHANGED=true
+          fi
+
+          if grep -qv "^.github/workflows" changed-files.txt && grep -qv "^TradingWebApp/tradingwebapp.client" changed-files.txt; then
+            echo "Backend project has changed"
+            BE_CHANGED=true
+          fi
+
+          echo "UI_CHANGED=${UI_CHANGED}" >> $GITHUB_ENV
+          echo "WORKFLOWS_CHANGED=${WORKFLOWS_CHANGED}" >> $GITHUB_ENV
+          echo "BE_CHANGED=${BE_CHANGED}" >> $GITHUB_ENV
+
   build-and-deploy-azure-functions:
     runs-on: ubuntu-latest
+    if: ${{ env.WORKFLOWS_CHANGED == 'true' || env.BE_CHANGED == 'true' }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read
@@ -53,6 +91,7 @@ jobs:
 
   build-and-deploy-angular-ui:
     runs-on: ubuntu-latest
+    if: ${{ env.WORKFLOWS_CHANGED == 'true' || env.UI_CHANGED == 'true' }}
     permissions:
       contents: read
     defaults:
