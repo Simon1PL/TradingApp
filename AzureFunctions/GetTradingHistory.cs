@@ -24,14 +24,14 @@ namespace AzureFunctions
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
+            string origin = req.Headers["Origin"];
+            // if (AllowedOrigins.Contains(origin))
+            // {
+            req.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+            // }
+
             if (req.Method == "OPTIONS")
             {
-                string origin = req.Headers["Origin"];
-                // if (AllowedOrigins.Contains(origin))
-                // {
-                    req.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
-                // }
-
                 req.HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
                 req.HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
                 req.HttpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
