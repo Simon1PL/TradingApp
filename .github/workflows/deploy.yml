@@ -16,6 +16,11 @@ env:
 jobs:
   check-changes:
     runs-on: ubuntu-latest
+    outputs:
+      UI_CHANGED: ${{ steps.set_outputs.outputs.UI_CHANGED }}
+      WORKFLOWS_CHANGED: ${{ steps.set_outputs.outputs.WORKFLOWS_CHANGED }}
+      BE_CHANGED: ${{ steps.set_outputs.outputs.BE_CHANGED }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,13 +52,14 @@ jobs:
             BE_CHANGED=true
           fi
 
-          echo "UI_CHANGED=${UI_CHANGED}" >> $GITHUB_ENV
-          echo "WORKFLOWS_CHANGED=${WORKFLOWS_CHANGED}" >> $GITHUB_ENV
-          echo "BE_CHANGED=${BE_CHANGED}" >> $GITHUB_ENV
+          echo "::set-output name=UI_CHANGED::${UI_CHANGED}"
+          echo "::set-output name=WORKFLOWS_CHANGED::${WORKFLOWS_CHANGED}"
+          echo "::set-output name=BE_CHANGED::${BE_CHANGED}"
 
   build-and-deploy-azure-functions:
     runs-on: ubuntu-latest
-    if: ${{ env.WORKFLOWS_CHANGED == 'true' || env.BE_CHANGED == 'true' }}
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.BE_CHANGED == 'true' }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read
@@ -91,7 +97,8 @@ jobs:
 
   build-and-deploy-angular-ui:
     runs-on: ubuntu-latest
-    if: ${{ env.WORKFLOWS_CHANGED == 'true' || env.UI_CHANGED == 'true' }}
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.UI_CHANGED == 'true' }}
     permissions:
       contents: read
     defaults:
