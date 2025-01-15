@@ -21,15 +21,18 @@
     "@angular/platform-browser": "^16.0.0",
     "@angular/platform-browser-dynamic": "^16.0.0",
     "@angular/router": "^16.0.0",
+    "@primeng/themes": "^19.0.5",
+    "jest-editor-support": "*",
+    "primeicons": "^7.0.0",
+    "primeng": "^16.9.1",
+    "run-script-os": "*",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.13.0",
-    "jest-editor-support": "*",
-    "run-script-os": "*"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.0.0",
-    "@angular/cli": "~16.0.0",
+    "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.0.0",
     "@types/jasmine": "~4.3.0",
     "jasmine-core": "~4.6.0",
