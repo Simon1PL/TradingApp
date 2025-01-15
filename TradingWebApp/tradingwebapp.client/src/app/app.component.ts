@@ -73,13 +73,14 @@ export class AppComponent implements OnInit {
   }
 
   getFromAzureFunction() {
-    this.http.get<string>('https://azurefunctionstradingapp.azurewebsites.net/api/TradingHistory').subscribe(
+    this.http.get<string>('https://azurefunctionstradingapp.azurewebsites.net/api/TradingHistory', { responseType: 'text' as 'json' }).subscribe(
       (result) => {
         console.log(result);
         this.azureFunctionResponse = result;
       },
       (error) => {
         console.error(error);
+        this.azureFunctionResponse = error.message;
       }
     );
   }
