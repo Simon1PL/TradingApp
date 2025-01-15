@@ -33,6 +33,7 @@ jobs:
           cat changed-files.txt
 
       - name: Check if tradingwebapp.client or workflows changed
+        id: set_outputs
         run: |
           UI_CHANGED=false
           WORKFLOWS_CHANGED=false
@@ -60,7 +61,7 @@ jobs:
   build-and-deploy-azure-functions:
     runs-on: ubuntu-latest
     needs: check-changes
-    if: ${{ check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.BE_CHANGED == 'true' }}
+    if: ${{ needs.check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.BE_CHANGED == 'true' }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read
@@ -99,7 +100,7 @@ jobs:
   build-and-deploy-angular-ui:
     runs-on: ubuntu-latest
     needs: check-changes
-    if: ${{ check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.UI_CHANGED == 'true' }}
+    if: ${{ needs.check-changes.outputs.WORKFLOWS_CHANGED == 'true' || needs.check-changes.outputs.UI_CHANGED == 'true' }}
     permissions:
       contents: read
     defaults:
