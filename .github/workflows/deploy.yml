@@ -123,14 +123,14 @@ jobs:
       - name: Build Angular app
         run: |
           REPO_NAME=$(basename $GITHUB_REPOSITORY)
-          npm run build -- --output-path=../../angular_output --base-href=/$REPO_NAME/
+          npm run build -- --output-path=${{ github.workspace }}/angular_output --base-href=/$REPO_NAME/
 
       - name: List contents of the build directory
-        run: ls -R ../../angular_output
+        run: ls -R ${{ github.workspace }}/angular_output
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ../../angular_output # because of the woring-directory set
+          publish_dir: ${{ github.workspace }}/angular_output # because of the woring-directory set
           
