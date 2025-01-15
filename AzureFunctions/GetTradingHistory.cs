@@ -15,7 +15,8 @@ namespace AzureFunctions
         private static readonly string[] AllowedOrigins = new string[]
         {
             "https://127.0.0.1:4200",
-            "https://simon1pl.github.io"
+            "https://simon1pl.github.io",
+            "*" // TEMPORARY!
         };
 
         [FunctionName("TradingHistory")]
