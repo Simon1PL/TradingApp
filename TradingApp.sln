@@ -17,11 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trading.Domain", "TradingAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingApp.Persistence", "TradingApp.Persistence\TradingApp.Persistence.csproj", "{96441C94-6904-4C03-A0FF-1E627743DCE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions", "AzureFunctions\AzureFunctions.csproj", "{BC76787F-31F3-4CBD-874C-B438160A4E7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions", "AzureFunctions\AzureFunctions.csproj", "{BC76787F-31F3-4CBD-874C-B438160A4E7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{72470B25-C808-4A6D-8BDF-CB220D7BCE78}"
 	ProjectSection(SolutionItems) = preProject
-		.github\workflows\main_azurefunctionstradingapp.yml = .github\workflows\main_azurefunctionstradingapp.yml
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
 	EndProjectSection
 EndProject
 Global
