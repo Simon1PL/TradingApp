@@ -4,8 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-// I have added the primeng version 16, probably it will be better to use v19 which requires Angular v19 which requires newer Node.js
-// https://www.primefaces.org/primeng-v16-lts/table#expand-mode
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 
