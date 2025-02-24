@@ -60,10 +60,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "tradingwebapp.client:build:production"
+              "buildTarget": "tradingwebapp.client:build:production"
             },
             "development": {
-              "browserTarget": "tradingwebapp.client:build:development"
+              "buildTarget": "tradingwebapp.client:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "tradingwebapp.client:build"
+            "buildTarget": "tradingwebapp.client:build"
           }
         },
         "test": {
