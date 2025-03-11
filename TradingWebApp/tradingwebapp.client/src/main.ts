@@ -9,7 +9,16 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideAnimationsAsync(),
     providePrimeNG({
-      theme: { preset: Aura }
+      theme: { 
+        preset: Aura,
+        options: {
+          darkModeSelector: '.my-app-dark',
+          cssLayer: {
+            name: 'primeng',
+            order: 'tailwind, primeng',
+          },
+        }
+      }
     }),
     provideHttpClient(withInterceptorsFromDi())
   ]

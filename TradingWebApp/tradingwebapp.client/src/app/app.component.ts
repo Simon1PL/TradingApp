@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService, PrimeIcons } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { Dialog } from 'primeng/dialog';
-import { Ripple } from 'primeng/ripple';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -51,7 +50,12 @@ interface ExportColumn {
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css'],
+    styleUrls: [
+      "primeng/resources/themes/aura/theme.css",
+      "primeng/resources/primeng.min.css",
+      "primeicons/primeicons.css",
+      "./app.component.css"
+    ],
     standalone: true,
     imports: [ButtonModule, RatingModule, TableModule, Dialog, SelectModule, ToastModule, ToolbarModule, ConfirmDialog, InputTextModule, TextareaModule, CommonModule, FileUpload, DropdownModule, Tag, RadioButton, Rating, InputTextModule, FormsModule, InputNumber, IconFieldModule, InputIconModule],
     providers: [MessageService, ConfirmationService],
@@ -64,6 +68,9 @@ export class AppComponent implements OnInit{
         id: '1000',
         name: 'Bamboo Watch',
         image: 'bamboo-watch.jpg',
+        rating: 3,
+        category: 'Accessories',
+        inventoryStatus: 'INSTOCK',
         orders: [
           {
             id: '1000-0',

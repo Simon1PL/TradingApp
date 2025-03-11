@@ -1,0 +1,20 @@
+<p>test works!</p>
+<div class="card flex justify-center">
+    <p-button label="Check" />
+</div>
+
+<h1 class="text-3xl font-bold underline">
+    Hello world!
+</h1>
+
+<p-toolbar styleClass="mb-6">
+    <ng-template #start>
+        <p-button label="New" icon="pi pi-plus" class="mr-2" />
+        <p-button severity="danger" label="Delete" icon="pi pi-trash" outlined [disabled]="false" />
+    </ng-template>
+
+    <ng-template #end>
+        <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" auto customUpload class="mr-2 inline-block" [chooseButtonProps]="{ severity: 'secondary' }" />
+        <p-button label="Export" icon="pi pi-upload" severity="secondary" />
+    </ng-template>
+</p-toolbar>
