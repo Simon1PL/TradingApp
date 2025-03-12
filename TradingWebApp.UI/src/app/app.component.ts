@@ -5,7 +5,6 @@ import { RatingModule } from 'primeng/rating';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 
 interface Column {
   field: string;
@@ -15,7 +14,7 @@ interface Column {
 @Component({
   standalone: true,
   selector: 'app-root',
-  imports: [ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, MatIconModule],
+  imports: [ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

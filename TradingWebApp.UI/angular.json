@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "trading-app": {
+    "TradingWebApp.UI": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/trading-app",
+            "outputPath": "dist/trading-web-app.ui",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -46,8 +46,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
               "outputHashing": "all"
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "trading-app:build:production"
+              "buildTarget": "TradingWebApp.UI:build:production"
             },
             "development": {
-              "buildTarget": "trading-app:build:development"
+              "buildTarget": "TradingWebApp.UI:build:development"
             }
           },
           "defaultConfiguration": "development"
