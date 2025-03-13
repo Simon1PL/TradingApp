@@ -1,12 +1,8 @@
-using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System.Linq;
+using Microsoft.Azure.Functions.Worker;
+using System.Text.Json;
 
 namespace AzureFunctions
 {
@@ -17,31 +13,31 @@ namespace AzureFunctions
             "https://simon1pl.github.io",
         ];
 
-        [FunctionName("TradingHistory")]
+        [Function("TradingHistory")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "options", Route = null)] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string origin = req.Headers["Origin"];
+            string? origin = req.Headers["Origin"];
             // if (AllowedOrigins.Contains(origin))
             // {
-            req.HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", origin);
+            req.HttpContext.Response.Headers.Append("Access-Control-Allow-Origin", origin);
             // }
 
             if (req.Method == "OPTIONS")
             {
-                req.HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                req.HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-                req.HttpContext.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+                req.HttpContext.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                req.HttpContext.Response.Headers.Append("Access-Control-Allow-Headers", "Content-Type, Authorization");
+                req.HttpContext.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
                 return new OkResult();
             }
 
-            string name = req.Query["name"];
+            string? name = req.Query["name"];
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
+            dynamic? data = JsonSerializer.Deserialize<dynamic>(requestBody);
             name ??= data?.name;
 
             string responseMessage = string.IsNullOrEmpty(name)
