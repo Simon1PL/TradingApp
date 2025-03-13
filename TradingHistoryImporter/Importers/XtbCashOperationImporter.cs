@@ -29,9 +29,9 @@ internal class XtbCashOperationImporter(XLWorkbook workbook) : IImporter
 
             result.Add(new TradingHistoryRowModel
             {
-                OperationName = row.Cell(headersColumnsNumbers["Typ"])?.Value.ToString(),
+                /*OperationName = row.Cell(headersColumnsNumbers["Typ"])?.Value.ToString(),
                 Price = price,
-                Sth = row.Cell(headersColumnsNumbers["Symbol"])?.Value.ToString()
+                Sth = row.Cell(headersColumnsNumbers["Symbol"])?.Value.ToString()*/
             });
         }
 

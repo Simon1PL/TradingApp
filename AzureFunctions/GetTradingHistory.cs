@@ -25,7 +25,8 @@ public class GetTradingHistory
         _logger.LogInformation("C# HTTP trigger function processed a request.");
         var response = req.CreateResponse(HttpStatusCode.OK);
 
-        string? origin = req.Headers.GetValues("Origin").SingleOrDefault();
+        req.Headers.TryGetValues("Origin", out var headers);
+        string? origin = headers?.FirstOrDefault();
         // if (AllowedOrigins.Contains(origin))
         // {
         response.Headers.Add("Access-Control-Allow-Origin", origin);
@@ -42,8 +43,11 @@ public class GetTradingHistory
         string? name = req.Query["name"];
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-        dynamic? data = JsonSerializer.Deserialize<dynamic>(requestBody);
-        name ??= data?.name;
+        if (!string.IsNullOrWhiteSpace(requestBody))
+        {
+            dynamic? data = JsonSerializer.Deserialize<dynamic>(requestBody);
+            name ??= data?.name;
+        }
 
         string responseMessage = string.IsNullOrEmpty(name)
             ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
