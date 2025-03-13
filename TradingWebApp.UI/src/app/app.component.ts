@@ -5,6 +5,7 @@ import { RatingModule } from 'primeng/rating';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface Column {
   field: string;
@@ -20,6 +21,7 @@ interface Column {
 })
 export class AppComponent {
   title = 'TradingWebApp.UI';
+  public azureFunctionResponse: string = '';
 
   products: any[] = [
     {
@@ -38,7 +40,9 @@ export class AppComponent {
 
   cols!: Column[];
 
-  constructor() {}
+  constructor(private http: HttpClient) {
+    this.getFromAzureFunction();
+  }
 
   getSeverity(status: string) {
     switch (status) {
@@ -51,10 +55,23 @@ export class AppComponent {
         default:
           return 'danger';
     }
-}
+  }
 
   toggleDarkMode() {
     const element = document.querySelector('html');
     element?.classList.toggle('dark-mode');
+  }
+
+  getFromAzureFunction() {
+    this.http.get<string>('https://azurefunctionstradingapp.azurewebsites.net/api/TradingHistory', { responseType: 'text' as 'json' }).subscribe({
+      next: (result) => {
+        console.log(result);
+        this.azureFunctionResponse = result;
+      },
+      error: (error) => {
+        console.error(error);
+        this.azureFunctionResponse = error.message;
+      },
+    });
   }
 }

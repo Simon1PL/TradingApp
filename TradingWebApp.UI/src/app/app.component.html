@@ -17,7 +17,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-product>
       <tr>
-          <td>{{ product.name }}</td>
+          <td>{{ product.name }} {{ azureFunctionResponse }}</td>
           <td>
               <img
                   [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image"

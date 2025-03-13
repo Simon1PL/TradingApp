@@ -19,7 +19,7 @@ public class GetTradingHistory
         _logger = loggerFactory.CreateLogger<GetTradingHistory>();
     }
 
-    [Function("Function1")]
+    [Function("TradingHistory")]
     public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", "options", Route = null)] HttpRequestData req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request.");
