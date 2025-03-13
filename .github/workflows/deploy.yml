@@ -39,7 +39,7 @@ jobs:
           WORKFLOWS_CHANGED=false
           BE_CHANGED=false
 
-          if grep -q "^TradingWebApp/tradingwebapp.client/" changed-files.txt; then
+          if grep -q "^TradingWebApp.UI/" changed-files.txt; then
             echo "UI project has changed"
             UI_CHANGED=true
           fi
@@ -49,7 +49,7 @@ jobs:
             WORKFLOWS_CHANGED=true
           fi
 
-          if grep -qv "^.github/workflows" changed-files.txt && grep -qv "^TradingWebApp/tradingwebapp.client" changed-files.txt; then
+          if grep -qv "^.github/workflows" changed-files.txt && grep -qv "^TradingWebApp.UI" changed-files.txt; then
             echo "Backend project has changed"
             BE_CHANGED=true
           fi
@@ -106,7 +106,7 @@ jobs:
       pages: write
     defaults:
       run:
-        working-directory: ./TradingWebApp/tradingwebapp.client
+        working-directory: ./TradingWebApp.UI
 
     steps:
       - name: 'Checkout GitHub Action'
