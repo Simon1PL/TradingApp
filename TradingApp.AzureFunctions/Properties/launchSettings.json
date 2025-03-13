@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "AzureFunctions": {
+    "TradingApp.AzureFunctions": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7064",
+      "commandLineArgs": "--port 7137",
       "launchBrowser": false
     }
   }
