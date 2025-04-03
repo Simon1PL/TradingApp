@@ -1,0 +1,15 @@
+<div class="excel-upload">
+    <button (click)="fileInput.click()">Import XTB file</button>
+    <input
+      #fileInput
+      type="file"
+      accept=".xlsx, .xls"
+      (change)="onFileChange($event)"
+      style="display: none"
+    />
+    <div *ngIf="excelData.length > 0">
+      <h3>Excel Data:</h3>
+      <pre>{{ excelData | json }}</pre>
+    </div>
+</div>
+  

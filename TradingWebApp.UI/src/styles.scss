@@ -1,8 +1,3 @@
 @use "tailwindcss";
 @import "primeicons/primeicons.css";
-
-// Icons
-// https://fonts.google.com/icons
-mat-icon {
-  display: flex !important;
-}
+@custom-variant dark (&:where(.dark-mode, .dark-mode *));
