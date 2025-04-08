@@ -1,5 +1,5 @@
-<div class="excel-upload">
-    <button (click)="fileInput.click()">Import XTB file</button>
+<div>
+    <p-button label="XTB import" (click)="fileInput.click()" class="mt-4" />
     <input
       #fileInput
       type="file"
@@ -7,9 +7,5 @@
       (change)="onFileChange($event)"
       style="display: none"
     />
-    <div *ngIf="excelData.length > 0">
-      <h3>Excel Data:</h3>
-      <pre>{{ excelData | json }}</pre>
-    </div>
 </div>
   

@@ -16,6 +16,10 @@ export class TradesService {
     return this.trades;
   }
 
+  addTrades(trades: Trade[]): void {
+    this.trades.push(...trades);
+  }
+
   async loadTrades(): Promise<void> {
     try {
       const result: string = await firstValueFrom(this.http.get<string>('https://azurefunctionstradingapp.azurewebsites.net/api/TradingHistory', { responseType: 'text' as 'json' }));
