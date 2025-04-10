@@ -1,4 +1,38 @@
-<p-table [value]="trades" [tableStyle]="{ 'min-width': '60rem' }">
+<p-table [value]="groupedTrades" [tableStyle]="{ 'min-width': '60rem' }">
+    <ng-template pTemplate="caption">
+        <div class="flex items-center justify-between">
+            <span class="text-xl font-bold">Trades</span>
+            <import-xtb></import-xtb>
+            <p-button icon="pi pi-refresh" rounded raised (click)="init()" />
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>CurrentAmount</th>
+            <th>MeanBuyPrice</th>
+            <th>MeanSellPrice</th>
+            <th>PastProfit</th>
+            <th>PastProfitPercent</th>
+            <th>MeanPastProfitPercentPerMonth</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-instrument>
+        <tr>
+            <td>{{ instrument.symbol }}</td>
+            <td>{{ instrument.name }}</td>
+            <td>{{ instrument.currentAmount }}</td>
+            <td>{{ instrument.meanBuyPrice }}</td>
+            <td>{{ instrument.meanSellPrice }}</td>
+            <td>{{ instrument.pastProfit }}</td>
+            <td>{{ instrument.pastProfitPercent }}</td>
+            <td>{{ instrument.meanPastProfitPercentPerMonth }}</td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<!-- <p-table [value]="trades" [tableStyle]="{ 'min-width': '60rem' }">
     <ng-template pTemplate="caption">
         <div class="flex items-center justify-between">
             <span class="text-xl font-bold">Trades</span>
@@ -12,6 +46,9 @@
             <th>Amount</th>
             <th>Price</th>
             <th>Value</th>
+            <th>Currency</th>
+            <th>Calculated value(may be in other currency)</th>
+            <th>Date</th>
             <th></th>
             <th>Comments</th>
         </tr>
@@ -29,8 +66,11 @@
                 </div>
             </td>
             <td>{{ trade.amount }}</td>
-            <td>{{ trade.price | currency: 'USD' }}</td>
-            <td>{{ trade.amount * trade.price | currency: ' ' }}</td>
+            <td>{{ trade.price | currency: ' ' }}</td>
+            <td>{{ trade.originalValue | currency: ' ' }}</td>
+            <td>{{ trade.currency }}</td>
+            <td>{{ trade.calculatedValue | currency: ' ' }}</td>
+            <td>{{ trade.date.toLocaleString() }}</td>
             <td>
                 <p-tag [value]="trade.transactionType" [severity]="getTradeResultColor(trade)" />
             </td>
@@ -44,4 +84,4 @@
         </tr>
     </ng-template>
     <ng-template pTemplate="footer"> In total there are {{ trades ? trades.length : 0 }} trades. </ng-template>
-</p-table>
+</p-table> -->

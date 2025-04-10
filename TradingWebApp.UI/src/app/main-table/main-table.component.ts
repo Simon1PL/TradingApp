@@ -6,7 +6,7 @@ import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TradesService } from '../services/trades.service';
-import { Trade } from '../models/tradeModels';
+import { Trade, UITrade, UITradeInstrument } from '../models/tradeModels';
 import { TransactionType } from '../models/tradeEnums';
 import { CompaniesInfoService } from '../services/companies-info.service';
 import { TextareaModule } from 'primeng/textarea';
@@ -26,10 +26,10 @@ export class MainTableComponent {
 
   async init() {
     await this.tradesService.loadTrades();
-    this.trades = this.tradesService.getTrades();
+    this.groupedTrades = this.tradesService.getGroupedUITrades();
   }
 
-  trades: Trade[] = [];
+  groupedTrades: UITradeInstrument[] = [];
 
   getTradeResultColor(trade: Trade): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
     switch (trade.transactionType) {
@@ -41,6 +41,8 @@ export class MainTableComponent {
         case TransactionType.DividendTax:
         case TransactionType.Swap:
         case TransactionType.Tax:
+        case TransactionType.FreeFundsInterestTax:
+        case TransactionType.Fee:
           return 'danger';
         case TransactionType.Withdrawal:
         case TransactionType.Deposit:

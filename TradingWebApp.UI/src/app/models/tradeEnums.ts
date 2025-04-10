@@ -1,4 +1,5 @@
 export enum TransactionType {
+    Unknown = "Unknown",
     Buy = "Buy",
     Sell = "Sell",
     Deposit = "Deposit",
@@ -6,6 +7,8 @@ export enum TransactionType {
     Dividend = "Dividend",
     DividendTax = "DividendTax",
     FreeFundsInterest = "FreeFundsInterest",
+    FreeFundsInterestTax = "FreeFundsInterestTax",
     Tax = "Tax",
-    Swap = "Swap"
+    Swap = "Swap",
+    Fee = "Fee",
 }
