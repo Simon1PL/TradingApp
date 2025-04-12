@@ -129,5 +129,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace }}/angular_output # because of the working-directory set
+          publish_dir: ${{ github.workspace }}/angular_output/browser # because of the working-directory set
           
