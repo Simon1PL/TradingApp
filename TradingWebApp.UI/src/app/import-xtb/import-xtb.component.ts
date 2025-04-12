@@ -130,7 +130,7 @@ export class ImportXTBComponent {
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);
           },
-          date: (x) => excelDateToJSDate(x['Open time']),
+          date: (x) => excelDateToJSDate(x['Close time']),
         };
 
         tradesFromClosedPositions.push(...convertDataToTrades(rows, xtbHeaders, xtbNonHeaderFields, closedPositionsCloseMappings));

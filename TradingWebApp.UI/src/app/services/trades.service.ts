@@ -78,26 +78,29 @@ export class TradesService {
       let sellVolumeSum = 0;
       let timeSum = 0;
       trades.forEach(trade => {
-        if (trade.transactionType === TransactionType.Buy || trade.transactionType === TransactionType.Dividend) {
+        if ((trade.originalValue ?? 0) < 0) {
           buyVolumeSum += trade.amount;
-          buyValueSum += trade.originalValue ?? 0;
-          timeSum += (trade.date?.getTime() ?? 0) * (trade.amount ?? 0);
+          buyValueSum += Math.abs(trade.originalValue ?? 0);
+          if (trade.transactionType === TransactionType.Buy || trade.transactionType === TransactionType.Sell) {
+            timeSum -= (trade.date?.getTime() ?? 0) * (trade.amount ?? 0);
+          }
         }
-        if (trade.transactionType === TransactionType.Sell || trade.transactionType === TransactionType.DividendTax) {
-          sellVolumeSum -= trade.amount;
-          sellValueSum -= trade.originalValue ?? 0;
-          timeSum -= (trade.date?.getTime() ?? 0) * (trade.amount ?? 0);
+        if ((trade.originalValue ?? 0) > 0) {
+          sellVolumeSum += trade.amount;
+          sellValueSum += Math.abs(trade.originalValue ?? 0);
+          if (trade.transactionType === TransactionType.Buy || trade.transactionType === TransactionType.Sell) {
+            timeSum += (trade.date?.getTime() ?? 0) * (trade.amount ?? 0);
+          }
         }
       });
 
       instrument.symbol = trades[0].symbol;
       instrument.meanBuyPrice = buyVolumeSum !== 0 ? buyValueSum / buyVolumeSum : 0;
       instrument.meanSellPrice = sellVolumeSum !== 0 ? sellValueSum / sellVolumeSum : 0;
-      instrument.currentAmount = buyVolumeSum + sellVolumeSum;
-      instrument.pastProfit = Math.min(buyVolumeSum, sellVolumeSum) * (instrument.meanBuyPrice - instrument.meanSellPrice);
-      instrument.pastProfitPercent = instrument.meanBuyPrice !== 0 ? (instrument.meanBuyPrice - instrument.meanSellPrice) / instrument.meanBuyPrice * 100 : 0;
+      instrument.pastProfit = Math.min(buyVolumeSum, sellVolumeSum) * (instrument.meanSellPrice - instrument.meanBuyPrice);
+      instrument.pastProfitPercent = instrument.meanBuyPrice !== 0 ? (instrument.meanSellPrice - instrument.meanBuyPrice) / instrument.meanBuyPrice * 100 : 0;
       instrument.currentAmount = buyVolumeSum - sellVolumeSum;
-      instrument.meanPastProfitPercentPerMonth = instrument.pastProfitPercent / timeSum / (1000 * 60 * 60 * 24 * 30);
+      instrument.meanPastProfitPercentPerMonth = Math.min(buyVolumeSum, sellVolumeSum) * instrument.pastProfitPercent / timeSum * 1000 * 60 * 60 * 24 * 30;
 
       this.groupedUITrades.push(instrument);
     });

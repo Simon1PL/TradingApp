@@ -6,16 +6,18 @@ import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TradesService } from '../services/trades.service';
-import { Trade, UITrade, UITradeInstrument } from '../models/tradeModels';
+import { Trade, UITradeInstrument } from '../models/tradeModels';
 import { TransactionType } from '../models/tradeEnums';
 import { CompaniesInfoService } from '../services/companies-info.service';
 import { TextareaModule } from 'primeng/textarea';
 import { ImportXTBComponent } from '../import-xtb/import-xtb.component';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   standalone: true,
   selector: 'main-table',
-  imports: [ImportXTBComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule],
+  imports: [ImportXTBComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule, IconFieldModule, InputIconModule],
   templateUrl: './main-table.component.html',
   styleUrl: './main-table.component.scss'
 })
@@ -30,6 +32,15 @@ export class MainTableComponent {
   }
 
   groupedTrades: UITradeInstrument[] = [];
+
+  onGlobalFilter(event: Event, table: any) {
+    const value = (event.target as HTMLInputElement).value;
+    table.filterGlobal(value, 'contains');
+  }
+
+  clear(table: any) {
+    table.clear();
+  }
 
   getTradeResultColor(trade: Trade): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
     switch (trade.transactionType) {
