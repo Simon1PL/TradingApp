@@ -151,7 +151,7 @@ export class ImportXTBComponent {
           currency: (x) => x['Currency'],
           originalValue: (x) => Number(x["Amount"]),
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => undefined,
+          shouldBeOnMinus: (x) => false,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);

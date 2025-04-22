@@ -1,4 +1,6 @@
 <div class="h-screen p-4 flex flex-col">
-    <p-button label="Toggle dark mode" (click)="toggleDarkMode()" class="mt-4" />
+    <p-button icon="pi pi-sun" [hidden]="!isDarkMode" rounded raised (click)="toggleDarkMode()" class="absolute top-0 right-0 z-10 -mt-2 -mr-2" />
+    <p-button icon="pi pi-moon" [hidden]="isDarkMode" rounded raised (click)="toggleDarkMode()" class="absolute top-0 right-0 z-10 -mt-2 -mr-2" />
+
     <main-table class="flex-1 overflow-auto"></main-table>
 </div>

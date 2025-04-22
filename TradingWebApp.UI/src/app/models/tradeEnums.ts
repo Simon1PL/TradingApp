@@ -9,6 +9,5 @@ export enum TransactionType {
     FreeFundsInterest = "FreeFundsInterest",
     FreeFundsInterestTax = "FreeFundsInterestTax",
     Tax = "Tax",
-    Swap = "Swap",
     Fee = "Fee",
 }

@@ -44,13 +44,20 @@ export function convertDataToTrades(
             fee: mappings.fee ? mappings.fee(obj) : 0,
             currency: mappings.currency ? mappings.currency(obj) : undefined,
             amount: mappings.amount ? mappings.amount(obj) : 0,
-            broker: mappings.broker ? mappings.broker(obj) : undefined,
+            broker: mappings.broker(obj),
             brokerAccount: mappings.brokerAccount ? mappings.brokerAccount(obj) : undefined,
             originalComment: mappings.originalComment ? mappings.originalComment(obj) : undefined,
             wasDone: mappings.wasDone ? mappings.wasDone(obj) : false,
-            shouldBeOnMinus: mappings.shouldBeOnMinus ? mappings.shouldBeOnMinus(obj) : undefined,
+            shouldBeOnMinus: mappings.shouldBeOnMinus ? mappings.shouldBeOnMinus(obj) : false,
             comments: [],
-            originalValue: mappings.originalValue ? mappings.originalValue(obj) : undefined,
+            originalValue: mappings.originalValue(obj),
+            
+            isCloseTrade: false,
+            closedAmount: 0,
+            calculatedValue: 0,
+            profit: null,
+            profitPercent: null,
+            profitPercentPer30Days: null
         };
 
         trade.transactionType = mappings.transactionType(trade.originalTransactionType ?? '');
@@ -150,8 +157,8 @@ export interface TradeFieldsMappings {
     brokerAccount?: (x: ObjectFromData) => string;
     originalComment?: (x: ObjectFromData) => string;
     wasDone?: (x: ObjectFromData) => boolean;
-    shouldBeOnMinus?: (x: ObjectFromData) => boolean | undefined;
-    originalValue?: (x: ObjectFromData) => number;
+    shouldBeOnMinus?: (x: ObjectFromData) => boolean;
+    originalValue: (x: ObjectFromData) => number;
     transactionType: (originalTransactionType: string) => TransactionType;
     skip?: (x: ObjectFromData) => boolean;
 }

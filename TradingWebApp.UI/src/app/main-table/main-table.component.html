@@ -44,7 +44,7 @@
             <th pSortableColumn="symbol">
                 <div class="flex items-center">
                     Symbol 
-                    <p-sortIcon field="symbol" class="ml-1" />
+                    <p-sortIcon field="symbol" class="ml-1 scale-75" />
                 </div>
             </th>
             <th pSortableColumn="name">
@@ -53,10 +53,10 @@
                     <p-sortIcon field="name" class="ml-1" />
                 </div>
             </th>
-            <th pSortableColumn="currentAmount">
+            <th pSortableColumn="stats.currentPositionsStats.volume">
                 <div class="flex items-center">
                     CurrentAmount
-                    <p-sortIcon field="currentAmount" class="ml-1" />
+                    <p-sortIcon field="stats.currentPositionsStats.volume" class="ml-1" />
                 </div>
             </th>
             <th pSortableColumn="meanBuyPrice">
@@ -98,115 +98,26 @@
             </td>
             <td>{{ instrument.symbol }}</td>
             <td>{{ instrument.name }}</td>
-            <td>{{ instrument.currentAmount }}</td>
-            <td>{{ instrument.meanBuyPrice }}</td>
-            <td>{{ instrument.meanSellPrice }}</td>
-            <td>{{ instrument.pastProfit }}</td>
-            <td>{{ instrument.pastProfitPercent }}</td>
-            <td>{{ instrument.meanPastProfitPercentPerMonth }}</td>
+            <td>{{ instrument.stats.currentPositionsStats.volume }}</td>
+            <td>
+                {{ ((instrument.stats.currentPositionsStats.volume * instrument.stats.currentPositionsStats.meanBuyPrice) + 
+                (instrument.stats.closedPositionsStats.volume * instrument.stats.closedPositionsStats.meanBuyPrice))
+                / (instrument.stats.currentPositionsStats.volume + instrument.stats.closedPositionsStats.volume) }}
+            </td>
+            <td>
+                {{ ((instrument.stats.currentPositionsStats.volume * instrument.stats.currentPositionsStats.meanSellPrice) + 
+                (instrument.stats.closedPositionsStats.volume * instrument.stats.closedPositionsStats.meanSellPrice))
+                / (instrument.stats.currentPositionsStats.volume + instrument.stats.closedPositionsStats.volume) }}
+            </td>
+            <td>{{ instrument.stats.closedPositionsStats.profit }}</td>
+            <td>{{ instrument.stats.closedPositionsStats.profitPercent }}%</td>
+            <td>{{ instrument.stats.closedPositionsStats.profitPercentPer30Days }}%</td>
         </tr>
     </ng-template>
     <ng-template #expandedrow let-instrument>
         <tr>
             <td colspan="9" class="dark:bg-zinc-700">
-                <div class="p-4">
-                    <p-table [value]="instrument.trades" dataKey="id" 
-                        sortField="date" [sortOrder]="1"
-                        [size]="'small'"
-                        showGridlines
-                        stripedRows
-                    >
-                        <ng-template #header>
-                            <tr>
-                                <th>
-                                    <div class="flex items-center">
-                                        Symbol
-                                        <p-columnFilter type="text" field="symbol" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Amount
-                                        <p-columnFilter type="text" field="amount" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Price
-                                        <p-columnFilter type="text" field="price" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Value
-                                        <p-columnFilter type="text" field="originalValue" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Currency
-                                        <p-columnFilter type="text" field="currency" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Calculated value(may be in other currency)
-                                        <p-columnFilter type="text" field="calculatedValue" display="menu" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="flex items-center" pSortableColumn="date">
-                                        Date
-                                        <p-columnFilter type="text" field="date" display="menu" />
-                                        <p-sortIcon field="date" class="ml-1" />
-                                    </div>
-                                </th>
-                                <th></th>
-                                <th>
-                                    <div class="flex items-center">
-                                        Comments
-                                        <p-columnFilter type="text" field="comments" display="menu" />
-                                    </div>
-                                </th>
-                            </tr>
-                        </ng-template>
-                        <ng-template #body let-trade>
-                            <tr>
-                                <td>
-                                    <div class="flex items-center gap-2">
-                                        <img
-                                            *ngIf="companiesInfoService.getCompanyIcon(trade.symbol)"
-                                            [src]="companiesInfoService.getCompanyIcon(trade.symbol)"
-                                            class="w-8 rounded"
-                                        />
-                                        {{ trade.symbol }}
-                                    </div>
-                                </td>
-                                <td>{{ trade.amount }}</td>
-                                <td>{{ trade.price | currency: ' ' }}</td>
-                                <td>{{ trade.originalValue | currency: ' ' }}</td>
-                                <td>{{ trade.currency }}</td>
-                                <td>{{ trade.calculatedValue | currency: ' ' }}</td>
-                                <td>{{ trade.date.toLocaleString() }}</td>
-                                <td>
-                                    <p-tag [value]="trade.transactionType" [severity]="getTradeResultColor(trade)" />
-                                </td>
-                                <td>
-                                    <tr *ngFor="let comment of trade.comments; let i = index">
-                                        <td>
-                                        <textarea rows="1" pTextarea [(ngModel)]="trade.comments[i].comment"></textarea>
-                                        </td>
-                                    </tr>
-                                </td>
-                            </tr>
-                        </ng-template>
-                        <ng-template #emptymessage>
-                            <tr>
-                                <td>There are no trades for this instrument.</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-                </div>
+                <trades-table [trades]="instrument.trades" [isSubTable]="true"></trades-table>
             </td>
         </tr>
     </ng-template>

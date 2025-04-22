@@ -11,13 +11,21 @@ import { Button } from 'primeng/button';
 })
 export class AppComponent {
   title = 'TradingWebApp.UI';
-  public azureFunctionResponse: string = '';
+  azureFunctionResponse: string = '';
+  isDarkMode: boolean = true;
 
   constructor() {
+    if (localStorage.getItem('dark-mode') === 'false') {
+      this.toggleDarkMode();
+    };
   }
 
   toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('dark-mode', this.isDarkMode.toString());
     const element = document.querySelector('html');
-    element?.classList.toggle('dark-mode');
+    if (this.isDarkMode !== element?.classList.contains('dark-mode')) {
+      element?.classList.toggle('dark-mode');
+    }
   }
 }
