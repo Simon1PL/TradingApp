@@ -14,11 +14,12 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TradesTableComponent } from '../trades-table/trades-table.component';
 import { calculateClosedTrades, calculateStats } from '../helpers/tradeHelper';
+import { ImportRevolutxComponent } from '../import-revolutx/import-revolutx.component';
 
 @Component({
   standalone: true,
   selector: 'main-table',
-  imports: [ImportXTBComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule, IconFieldModule, InputIconModule, TradesTableComponent],
+  imports: [ImportRevolutxComponent, ImportXTBComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule, IconFieldModule, InputIconModule, TradesTableComponent],
   templateUrl: './main-table.component.html',
   styleUrl: './main-table.component.scss'
 })

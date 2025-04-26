@@ -18,7 +18,6 @@ function getHoursAmountFromDate(date: Date) {
 export function calculateStats(trades: Trade[]): TradesStats {
     const stats = new TradesStats();
     const dayAmountUpToNow = getHoursAmountFromDate(new Date());
-    console.log(dayAmountUpToNow);
     trades.forEach(trade => {
         const valueAbsX100 = Math.abs(trade.originalValue ?? 0) * 100;
         stats.cashOperationsStats.timeHavingCash -= getHoursAmountFromDate(trade.date!) * trade.originalValue;
@@ -137,6 +136,6 @@ export function calculateClosedTrades(trades: Trade[]): void {
 
     if (Math.round(closedTradesVolumeSum * 100) / 100 > 0) {
         console.error('Not all closed trades were closed!');
-        console.log(trades);
+        console.error(trades);
     }
 }

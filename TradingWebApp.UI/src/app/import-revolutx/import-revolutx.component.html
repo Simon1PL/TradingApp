@@ -1,0 +1,20 @@
+<div>
+    <p-button label="RevolutX export to csv from html" (click)="fileInput.click()" class="mt-4" />
+    <input
+      #fileInput
+      type="file"
+      accept=".txt, .html"
+      (change)="onFileChange($event)"
+      style="display: none"
+    />
+
+    <p-button label="RevolutX podatek" (click)="fileInput2.click()" class="mt-4" />
+    <input
+      #fileInput2
+      type="file"
+      accept=".xlsx, .xls, .csv, .txt, .html"
+      (change)="onFileChange2($event)"
+      style="display: none"
+    />
+</div>
+  
