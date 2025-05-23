@@ -21,8 +21,8 @@ export class ImportXTBComponent {
 
   constructor(private tradeService: TradesService) { }
 
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
+  onFileChange(event: Event): void {
+    const file = (event.target as HTMLInputElement).files![0];
 
     if (file) {
       const reader = new FileReader();

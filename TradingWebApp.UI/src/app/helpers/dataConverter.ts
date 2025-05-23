@@ -33,7 +33,7 @@ export function convertDataToTrades(
             continue;
         }
 
-        const trade: Trade = {
+        const trade: Trade = new Trade({
             originalTransactionId: mappings.originalTransactionId ? mappings.originalTransactionId(obj) : undefined,
             symbol: mappings.symbol ? mappings.symbol(obj) : '',
             date: mappings.date ? mappings.date(obj) : undefined,
@@ -51,14 +51,7 @@ export function convertDataToTrades(
             shouldBeOnMinus: mappings.shouldBeOnMinus ? mappings.shouldBeOnMinus(obj) : false,
             comments: [],
             originalValue: mappings.originalValue(obj),
-            
-            isCloseTrade: false,
-            closedAmount: 0,
-            calculatedValue: 0,
-            profit: null,
-            profitPercent: null,
-            profitPercentPer30Days: null
-        };
+        });
 
         trade.transactionType = mappings.transactionType(trade.originalTransactionType ?? '');
         if(trade.originalValue) {
@@ -82,21 +75,25 @@ function findRowIndexWithGivenFields(rows: string[][], requiredFields: string[])
 }
 
 function findLastRowIndex(rows: string[][], headerLength: number): number {
-    let notEmptyFieldsAmount = 0;
+    // TO DO, check if it is working fine for XTB/Revolut Total rows
+    // let notEmptyFieldsAmount = 0;
     for (let row = 0; row < rows.length; row++) {
         let currentRowNotEmptyFieldsAmount = 0;
         for (let j = 0; j < headerLength; j++) {
             if (rows[row][j]) {
                 currentRowNotEmptyFieldsAmount++;
-                notEmptyFieldsAmount++;
+                // notEmptyFieldsAmount++;
             }
         }
 
-        const averageNotEmptyFieldsAmount = (notEmptyFieldsAmount - currentRowNotEmptyFieldsAmount) / row;
-        const minFieldsToBeCountedAsRow = averageNotEmptyFieldsAmount / 2;
-        if (currentRowNotEmptyFieldsAmount < minFieldsToBeCountedAsRow) {
+        if (currentRowNotEmptyFieldsAmount == 0) {
             return row - 1;
         }
+        // const averageNotEmptyFieldsAmount = (notEmptyFieldsAmount - currentRowNotEmptyFieldsAmount) / row;
+        // const minFieldsToBeCountedAsRow = averageNotEmptyFieldsAmount / 2;
+        // if (currentRowNotEmptyFieldsAmount < minFieldsToBeCountedAsRow) {
+        //     return row - 1;
+        // }
     }
 
     return rows.length - 1;

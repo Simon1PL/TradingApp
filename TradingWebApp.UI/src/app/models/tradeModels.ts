@@ -3,29 +3,33 @@ import { TransactionType } from "./tradeEnums";
 export class Trade {
     id?: string;
     originalTransactionId?: string;
-    symbol: string;
+    symbol: string = '';
     date?: Date;
-    originalDate: string;
+    originalDate: string = '';
     transactionType: TransactionType = TransactionType.Unknown;
     originalTransactionType?: string;
     fee: number = 0;
     currency?: string;
-    amount: number;
-    broker: string;
+    amount: number = -1;
+    broker: string = '';
     brokerAccount?: string;
     originalComment?: string;
     comments: MyComment[] = [];
     wasDone: boolean = true;
     shouldBeOnMinus: boolean = false;
-    originalValue: number;
-    price: number;
+    originalValue: number = -1;
+    price: number = -1;
 
     isCloseTrade: boolean = false;
     closedAmount: number = 0;
     openTrade?: Trade;
 
+    constructor(object?: Partial<Trade>) {
+        Object.assign(this, object);
+    }
+
     get calculatedValue(): number {
-        return (this.shouldBeOnMinus !== undefined ? (this.shouldBeOnMinus ? -1 : 1) * Math.abs(this.price ?? 0) : (this.price ?? 0)) * (this.amount ?? 0) - Math.abs(this.fee ?? 0);
+        return (this.shouldBeOnMinus ? -1 : 1) * Math.abs(this.price ?? 0) * (this.amount ?? 0) - Math.abs(this.fee ?? 0);
     }
 
     get profit(): number | null {
@@ -38,15 +42,6 @@ export class Trade {
 
     get profitPercentPer30Days(): number | null {
         return this.openTrade ? this.profitPercent! / ((this.date!.getTime() - this.openTrade.date!.getTime()) / (1000 * 60 * 60 * 24 * 30)) : null;
-    }
-
-    constructor(broker: string, symbol: string, originalDate: string, originalValue: number, price: number | null = null, amount: number = 1) {
-        this.broker = broker;
-        this.symbol = symbol;
-        this.originalDate = originalDate;
-        this.originalValue = originalValue;
-        this.amount = amount;
-        this.price = price ?? originalValue / amount;
     }
 }
 

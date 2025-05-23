@@ -15,11 +15,12 @@ import { InputIconModule } from 'primeng/inputicon';
 import { TradesTableComponent } from '../trades-table/trades-table.component';
 import { calculateClosedTrades, calculateStats } from '../helpers/tradeHelper';
 import { ImportRevolutxComponent } from '../import-revolutx/import-revolutx.component';
+import { ImportBybitComponent } from '../import-bybit/import-bybit.component';
 
 @Component({
   standalone: true,
   selector: 'main-table',
-  imports: [ImportRevolutxComponent, ImportXTBComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule, IconFieldModule, InputIconModule, TradesTableComponent],
+  imports: [ImportRevolutxComponent, ImportXTBComponent, ImportBybitComponent, ButtonModule, TableModule, CommonModule, RatingModule, TagModule, FormsModule, TextareaModule, IconFieldModule, InputIconModule, TradesTableComponent],
   templateUrl: './main-table.component.html',
   styleUrl: './main-table.component.scss'
 })

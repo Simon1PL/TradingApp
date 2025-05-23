@@ -37,16 +37,28 @@ export class TradesService {
 }
 
 const exampleTrades: Trade[] = [
-  Object.assign(new Trade('XTB', 'MSFT', jsDateToExcelDate(new Date('2023-01-01')), 120, 60, 2), {
-    fee: 10,
-    currency: 'USD',
-    originalTransactionType: "BUY",
-    brokerAccount: 'TEST',    
-  }),
-  Object.assign(new Trade('XTB', 'MSFT', jsDateToExcelDate(new Date('2023-01-02')), 130, 65, 2), {
+  new Trade({
+    symbol: 'MSFT',
+    broker: 'XTB',
+    originalDate: jsDateToExcelDate(new Date('2023-01-02')),
     fee: 0,
     currency: 'USD',
     originalTransactionType: "BUY",
     brokerAccount: 'TEST',
+    amount: 2,
+    price: 65,
+    originalValue: 130
+  }),
+  new Trade({
+    symbol: 'MSFT',
+    broker: 'XTB',
+    originalDate: jsDateToExcelDate(new Date('2023-01-01')),
+    fee: 0,
+    currency: 'USD',
+    originalTransactionType: "BUY",
+    brokerAccount: 'TEST',
+    amount: 2,
+    price: 60,
+    originalValue: 120
   }),
 ];
