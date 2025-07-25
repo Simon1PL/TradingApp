@@ -6,7 +6,7 @@ export class User {
     accounts: Account[] = [];
     defaultAccountName?: string;
     cash: Map<string, number> = this.accounts.reduce((acc, account) => {
-        acc.set(account.currency, 0); // TO DO
+        acc.set(account.symbol2, 0); // TO DO
         return acc;
     }, new Map<string, number>());
 

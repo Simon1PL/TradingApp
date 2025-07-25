@@ -5,7 +5,7 @@ import { TransactionType } from '../models/tradeEnums';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { CommonModule } from '@angular/common';
-import { CompaniesInfoService } from '../services/companies-info.service';
+import { InstrumentsService } from '../services/instruments.service';
 
 @Component({
   selector: 'trades-table',
@@ -17,7 +17,7 @@ export class TradesTableComponent {
   @Input() trades: Trade[] = [];
   @Input() isSubTable: boolean = false;
 
-  constructor(public companiesInfoService: CompaniesInfoService) { }
+  constructor(public companiesInfoService: InstrumentsService) { }
 
   getTradeResultColor(trade: Trade): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" | undefined {
     switch (trade.transactionType) {

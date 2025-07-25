@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import * as XLSX from 'xlsx';
-import { multiplierToMakeTheNumberAnInteger } from '../helpers/calculationsHelper';
+import BigNumber from "bignumber.js";
 
 @Component({
   standalone: true,
@@ -12,7 +12,7 @@ import { multiplierToMakeTheNumberAnInteger } from '../helpers/calculationsHelpe
   styleUrl: './import-revolutx.component.scss'
 })
 export class ImportRevolutxComponent {
-  private currencyCodes: string[] = [];
+  private symbol2Codes: string[] = [];
   private dates: string[] = [];
   private exchangeRates: string[][] = [];
   constructor(private http: HttpClient) {
@@ -65,13 +65,13 @@ export class ImportRevolutxComponent {
       const worksheet = workbook.Sheets[sheetName];
       const rows: string[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
       this.exchangeRates = rows;
-      this.currencyCodes = rows.find((row) => row[0] === 'kod ISO') ?? [];
+      this.symbol2Codes = rows.find((row) => row[0] === 'kod ISO') ?? [];
       this.dates = rows.map((row) => row[0]?.toString());
     });
   }
 
-  private getExchangeRateFromPreviousWorkingDay(date: Date, currencyCode: string): number | null {
-    if (currencyCode === 'PLN') return 1;
+  private getExchangeRateFromPreviousWorkingDay(date: Date, symbol2Code: string): BigNumber | null {
+    if (symbol2Code === 'PLN') return BigNumber(1);
 
     let i = 0;
     while (i < 5) {
@@ -84,11 +84,11 @@ export class ImportRevolutxComponent {
       const dateIndex = this.dates.indexOf(formattedDate);
       if (dateIndex === -1) continue;
 
-      const currencyIndex = this.currencyCodes.indexOf(currencyCode);
-      if (currencyIndex === -1) continue;
+      const symbol2Index = this.symbol2Codes.indexOf(symbol2Code);
+      if (symbol2Index === -1) continue;
 
-      const exchangeRate = this.exchangeRates[dateIndex][currencyIndex];
-      return parseFloat((exchangeRate ?? '').toString().replace(',', '.'));
+      const exchangeRate = this.exchangeRates[dateIndex][symbol2Index];
+      return BigNumber((exchangeRate ?? '').toString().replace(',', '.'));
     }
 
     return null;
@@ -162,43 +162,38 @@ export class ImportRevolutxComponent {
 
       const dateText = rowTexts[1];
       const date = new Date(dateText);
-      let currency: string = rowTexts[0].split('-')[1].trim();
-      let valueSign = 1;
+      let symbol2: string = rowTexts[0].split('-')[1].trim();
+      let valueSign = BigNumber(1);
       if (rowTexts[2] === 'Buy') {
-        valueSign = -1;
+        valueSign = BigNumber(-1);
       }
 
       const formattedDate = date.getFullYear().toString() +
         (date.getMonth() + 1).toString().padStart(2, '0') +
         date.getDate().toString().padStart(2, '0');
       rowTexts.push(formattedDate);
-      let nbp = this.getExchangeRateFromPreviousWorkingDay(date, currency) ?? 0;
+      let nbp = this.getExchangeRateFromPreviousWorkingDay(date, symbol2) ?? 0;
       if (nbp === 0 && date.getFullYear() === 2024) {
-        console.error(`Nie znaleziono kursu NBP dla waluty ${currency} na dzień ${formattedDate}`);
-        rowTexts.push(`Nie znaleziono kursu NBP dla waluty ${currency} na dzień ${formattedDate}`);
+        console.error(`Nie znaleziono kursu NBP dla waluty ${symbol2} na dzień ${formattedDate}`);
+        rowTexts.push(`Nie znaleziono kursu NBP dla waluty ${symbol2} na dzień ${formattedDate}`);
       }
       else {
         rowTexts.push(nbp?.toString() ?? '');
       }
 
-      const value = parseFloat(rowTexts[5].toString().replace(/[^0-9.-]+/g, ''));
-      const valueMultiplier = multiplierToMakeTheNumberAnInteger(value);
-      const nbpMultiplier = multiplierToMakeTheNumberAnInteger(nbp);
-      const valueInPln = valueSign * Math.round(value * valueMultiplier) * Math.round(nbp * nbpMultiplier) / valueMultiplier / nbpMultiplier;
+      const value = BigNumber(rowTexts[5].toString().replace(/[^0-9.-]+/g, ''));
+      const valueInPln = valueSign.multipliedBy(value).multipliedBy(nbp);
       rowTexts.push(valueInPln.toFixed(2).toString());
-      const price = parseFloat(rowTexts[4].replace(/[^0-9.-]+/g, ''));
-      const priceMultiplier = multiplierToMakeTheNumberAnInteger(price);
-      const priceInPln = Math.round(price * priceMultiplier) * Math.round(nbp * nbpMultiplier) / priceMultiplier / nbpMultiplier;
+      const price = BigNumber(rowTexts[4].replace(/[^0-9.-]+/g, ''));
+      const priceInPln = price.multipliedBy(nbp);
       rowTexts.push(priceInPln.toString());
-      const fee = parseFloat(rowTexts[6].toString().replace(/[^0-9.-]+/g, ''));
-      const feeMultiplier = multiplierToMakeTheNumberAnInteger(fee);
-      const priceInPlnMultiplier = multiplierToMakeTheNumberAnInteger(priceInPln);
-      let feeInPln = 0;
-      if (rowTexts[2] === 'Buy') {
-        feeInPln = rowTexts[6] === 'No fees' ? 0 : Math.round(fee * feeMultiplier) * Math.round(priceInPln * priceInPlnMultiplier) / feeMultiplier / priceInPlnMultiplier;
+      const fee = BigNumber(rowTexts[6].toString().replace(/[^0-9.-]+/g, ''));
+      let feeInPln = BigNumber(0);
+      if (rowTexts[2] === 'Buy' && rowTexts[6] !== 'No fees') {
+        feeInPln = fee.multipliedBy(priceInPln);
       }
-      if (rowTexts[2] === 'Sell') {
-        feeInPln = rowTexts[6] === 'No fees' ? 0 : Math.round(fee * feeMultiplier) * Math.round(nbp * nbpMultiplier) / feeMultiplier / nbpMultiplier;
+      if (rowTexts[2] === 'Sell' && rowTexts[6] !== 'No fees') {
+        feeInPln = fee.multipliedBy(nbp);
       }
 
       rowTexts.push(feeInPln.toFixed(2).toString());

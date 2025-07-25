@@ -1,6 +1,15 @@
 # MY
 ng generate component component-name --standalone=true --skip-tests
 
+Słownik:
+Instrument/TradeInstrument - firma/waluta/kryptowaluta np. Microsoft, Bitcoin, USD
+Trade - pojedyncza transakcja
+Current trade/position - obecnie otwarta pozycja
+Long - pozycja 'normalna' czyli kupno po x i potem sprzedaz po y
+Short - pozycja 'na spadki' czyli 'pożyczasz' instrument od giełdy z obowiązkiem zwrotu takiej samej ilosci, pożyczasz x akcji po Y, płacisz za nie i oddajesz później x akcji po Z
+
+- podatek od np dywidend osobno niz podatek od akcji
+- podatek wyliczamy od zakmknietych pozycji (zamknecia zawieraja zysk wiec otwarcia nas nie obchodzą)
 
 # TradingWebAppUI
 

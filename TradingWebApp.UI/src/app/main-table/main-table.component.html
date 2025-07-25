@@ -2,10 +2,10 @@
 <!-- 1. current value api -->
 <!-- 2. cash stats -->
 <!-- 3. volume rounding -->
-<!-- 4. fiter by start and end  dates -->
+<!-- 4. fiter by start and end dates -->
 <p-table 
     #mainTable
-    [value]="groupedTrades"
+    [value]="instruments"
     [globalFilterFields]="['symbol', 'name', 'type']"
     [tableStyle]="{ 'min-width': '60rem' }"
     stateStorage="session"
@@ -27,7 +27,7 @@
             <import-xtb></import-xtb>
             <import-bybit></import-bybit>
             <import-revolutx></import-revolutx>
-            <p-button icon="pi pi-refresh" rounded raised (click)="init()" />
+            <p-button icon="pi pi-refresh" rounded raised (click)="clearCache()" />
             <p-button [outlined]="true" icon="pi pi-filter-slash" label="Clear" (click)="clear(mainTable)" />
             
         </div>
@@ -60,10 +60,10 @@
                     <p-sortIcon field="name" class="ml-1" />
                 </div>
             </th>
-            <th pSortableColumn="stats.currentPositionsStats.volume">
+            <th pSortableColumn="buyVolume">
                 <div class="flex items-center">
                     CurrentAmount
-                    <p-sortIcon field="stats.currentPositionsStats.volume" class="ml-1" />
+                    <p-sortIcon field="buyVolume" class="ml-1" />
                 </div>
             </th>
             <th pSortableColumn="meanBuyPrice">
@@ -105,20 +105,16 @@
             </td>
             <td>{{ instrument.symbol }}</td>
             <td>{{ instrument.name }}</td>
-            <td>{{ instrument.stats.currentPositionsStats.volume }}</td>
+            <td>{{ instrument.longPositionsStats.volume }}</td>
             <td>
-                {{ ((instrument.stats.currentPositionsStats.volume * instrument.stats.currentPositionsStats.meanBuyPrice) + 
-                (instrument.stats.closedPositionsStats.volume * instrument.stats.closedPositionsStats.meanBuyPrice))
-                / (instrument.stats.currentPositionsStats.volume + instrument.stats.closedPositionsStats.volume) }}
+                {{ instrument.longPositionsStats.meanOpenValue.toFixed(2) }}
             </td>
             <td>
-                {{ ((instrument.stats.currentPositionsStats.volume * instrument.stats.currentPositionsStats.meanSellPrice) + 
-                (instrument.stats.closedPositionsStats.volume * instrument.stats.closedPositionsStats.meanSellPrice))
-                / (instrument.stats.currentPositionsStats.volume + instrument.stats.closedPositionsStats.volume) }}
+                {{ instrument.longPositionsStats.meanCloseValue.toFixed(2) }}
             </td>
-            <td>{{ instrument.stats.closedPositionsStats.profit }}</td>
-            <td>{{ instrument.stats.closedPositionsStats.profitPercent }}%</td>
-            <td>{{ instrument.stats.closedPositionsStats.profitPercentPer30Days }}%</td>
+            <td>{{ instrument.getProfits().profit.toFixed(2) }}</td>
+            <td>{{ instrument.getProfits().profitPercent.toFixed(2) }}%</td>
+            <td>{{ instrument.getProfits().profitPercentPer30Days.toFixed(2) }}%</td>
         </tr>
     </ng-template>
     <ng-template #expandedrow let-instrument>

@@ -35,7 +35,7 @@
             </th>
             <th>
                 <div class="flex items-center">
-                    Calculated value(may be in other currency)
+                    Calculated value(may be in other symbol2)
                 </div>
             </th>
             <th>
@@ -65,10 +65,10 @@
                 </div>
             </td>
             <td>{{ trade.amount }}</td>
-            <td>{{ trade.price | currency: ' ' }}</td>
-            <td>{{ trade.originalValue | currency: ' ' }}</td>
-            <td>{{ trade.currency }}</td>
-            <td>{{ trade.calculatedValue | currency: ' ' }}</td>
+            <td>{{ trade.price.toFixed(2) | currency: ' ' }}</td>
+            <td>{{ trade.originalValue.toFixed(2) | currency: ' ' }}</td>
+            <td>{{ trade.symbol2 }}</td>
+            <td>{{ trade.calculatedValue.toFixed(2) | currency: ' ' }}</td>
             <td>{{ trade.date.toLocaleString() }}</td>
             <td>
                 <p-tag [value]="trade.transactionType" [severity]="getTradeResultColor(trade)" />

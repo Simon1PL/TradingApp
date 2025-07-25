@@ -1,19 +1,26 @@
-import { Trade, UITrade } from "./tradeModels";
+import { Trade } from "./tradeModels";
 
 export class Account {
     id?: string;
     originalId?: string;
     name: string;
     broker: string;
-    currency: string;
+    symbol2: string;
     userId?: string;
-    isDefault: boolean = false;
     trades: Trade[] = [];
 
-    constructor(name: string, broker: string, currency: string, originalId?: string) {
+    constructor(name: string, broker: string, symbol2: string, originalId?: string) {
         this.originalId = originalId;
         this.name = name;
         this.broker = broker;
-        this.currency = currency;
+        this.symbol2 = symbol2;
+    }
+
+    addTrades(trades: Trade[]) {
+        this.trades.push(...trades);
+    }
+
+    calculateStats() {
+
     }
 }

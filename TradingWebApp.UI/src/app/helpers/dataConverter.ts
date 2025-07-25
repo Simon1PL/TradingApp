@@ -1,5 +1,6 @@
 import { TransactionType } from "../models/tradeEnums";
 import { Trade } from "../models/tradeModels";
+import BigNumber from "bignumber.js";
 
 export function convertDataToTrades(
     data: string[][],
@@ -40,22 +41,22 @@ export function convertDataToTrades(
             originalDate: mappings.originalDate ? mappings.originalDate(obj) : '',
             originalTransactionType: mappings.originalTransactionType ? mappings.originalTransactionType(obj) : undefined,
             transactionType: TransactionType.Unknown,
-            price: mappings.price ? mappings.price(obj) : 0,
-            fee: mappings.fee ? mappings.fee(obj) : 0,
-            currency: mappings.currency ? mappings.currency(obj) : undefined,
-            amount: mappings.amount ? mappings.amount(obj) : 0,
+            price: BigNumber(mappings.price ? mappings.price(obj) : 0),
+            fee: BigNumber(mappings.fee ? mappings.fee(obj) : 0),
+            symbol2: mappings.symbol2 ? mappings.symbol2(obj) : undefined,
+            amount: BigNumber(mappings.amount ? mappings.amount(obj) : 0),
             broker: mappings.broker(obj),
             brokerAccount: mappings.brokerAccount ? mappings.brokerAccount(obj) : undefined,
             originalComment: mappings.originalComment ? mappings.originalComment(obj) : undefined,
             wasDone: mappings.wasDone ? mappings.wasDone(obj) : false,
-            shouldBeOnMinus: mappings.shouldBeOnMinus ? mappings.shouldBeOnMinus(obj) : false,
             comments: [],
-            originalValue: mappings.originalValue(obj),
+            originalValue: BigNumber(mappings.originalValue(obj)),
+            leverage: mappings.leverage ? BigNumber(mappings.leverage(obj)) : BigNumber(1),
         });
 
         trade.transactionType = mappings.transactionType(trade.originalTransactionType ?? '');
         if(trade.originalValue) {
-            trade.originalValue -= Math.abs(trade.fee);
+            trade.originalValue = trade.originalValue.minus(trade.fee.abs());
         }
 
         result.push(trade);
@@ -146,18 +147,18 @@ export interface TradeFieldsMappings {
     originalDate: (x: ObjectFromData) => string;
     date?: (x: ObjectFromData) => Date;
     originalTransactionType: (x: ObjectFromData) => string;
-    price: (x: ObjectFromData) => number;
-    fee?: (x: ObjectFromData) => number;
-    currency: (x: ObjectFromData) => string;
-    amount: (x: ObjectFromData) => number;
+    price: (x: ObjectFromData) => BigNumber;
+    fee?: (x: ObjectFromData) => BigNumber;
+    symbol2: (x: ObjectFromData) => string;
+    amount: (x: ObjectFromData) => BigNumber;
     broker: (x: ObjectFromData) => string;
     brokerAccount?: (x: ObjectFromData) => string;
     originalComment?: (x: ObjectFromData) => string;
     wasDone?: (x: ObjectFromData) => boolean;
-    shouldBeOnMinus?: (x: ObjectFromData) => boolean;
-    originalValue: (x: ObjectFromData) => number;
+    originalValue: (x: ObjectFromData) => BigNumber;
     transactionType: (originalTransactionType: string) => TransactionType;
     skip?: (x: ObjectFromData) => boolean;
+    leverage?: (x: ObjectFromData) => BigNumber;
 }
 
 interface ObjectFromData {

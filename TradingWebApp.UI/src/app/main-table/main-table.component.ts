@@ -6,16 +6,16 @@ import { RatingModule } from 'primeng/rating';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TradesService } from '../services/trades.service';
-import { Trade, UITradeInstrument } from '../models/tradeModels';
-import { CompaniesInfoService } from '../services/companies-info.service';
+import { Trade } from '../models/tradeModels';
+import { InstrumentsService } from '../services/instruments.service';
 import { TextareaModule } from 'primeng/textarea';
 import { ImportXTBComponent } from '../import-xtb/import-xtb.component';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { TradesTableComponent } from '../trades-table/trades-table.component';
-import { calculateClosedTrades, calculateStats } from '../helpers/tradeHelper';
 import { ImportRevolutxComponent } from '../import-revolutx/import-revolutx.component';
 import { ImportBybitComponent } from '../import-bybit/import-bybit.component';
+import { TradeInstrument } from '../models/instrumentModels';
 
 @Component({
   standalone: true,
@@ -25,7 +25,9 @@ import { ImportBybitComponent } from '../import-bybit/import-bybit.component';
   styleUrl: './main-table.component.scss'
 })
 export class MainTableComponent {
-  constructor(private tradesService: TradesService, public companiesInfoService: CompaniesInfoService) {
+  instruments: TradeInstrument[] = [];
+  
+  constructor(private tradesService: TradesService, private instrumentsService: InstrumentsService) {
     this.init();
   }
 
@@ -38,10 +40,13 @@ export class MainTableComponent {
       return 0;
     });
 
-    this.groupedTrades = this.groupTrades(trades);
+    this.instruments = this.instrumentsService.getInstruments();
   }
 
-  groupedTrades: UITradeInstrument[] = [];
+  async clearCache() {
+    this.tradesService.clearCache();
+    await this.init();
+  }
 
   onGlobalFilter(event: Event, table: any) {
     const value = (event.target as HTMLInputElement).value;
@@ -50,30 +55,5 @@ export class MainTableComponent {
 
   clear(table: any) {
     table.clear();
-  }
-
-  groupTrades(trades: Trade[]): UITradeInstrument[] {
-    const result: UITradeInstrument[] = [];
-    const grouped = new Map<string, Trade[]>();
-    for (const trade of trades as Trade[]) {
-      if (!grouped.has(trade.symbol)) {
-        grouped.set(trade.symbol, []);
-      }
-
-      grouped.get(trade.symbol)?.push(trade);
-    }
-
-    grouped.forEach((trades) => {
-      calculateClosedTrades(trades);
-    });
-
-    grouped.forEach((trades, symbol) => {
-      const instrument: UITradeInstrument = new UITradeInstrument(symbol, trades);
-      instrument.stats = calculateStats(trades);
-      instrument.name = ''; // TO DO, sth like this.companiesInfoService.getCompanyName(symbol)?
-      result.push(instrument);
-    });
-
-    return result;
   }
 }

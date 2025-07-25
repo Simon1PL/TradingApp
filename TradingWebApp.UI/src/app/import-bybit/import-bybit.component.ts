@@ -7,6 +7,7 @@ import { TransactionType } from '../models/tradeEnums';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { excelDateToJSDate } from '../helpers/excelHelper';
+import BigNumber from "bignumber.js";
 
 @Component({
   standalone: true,
@@ -45,11 +46,11 @@ export class ImportBybitComponent {
       const workbook = XLSX.read(binaryString, { type: 'binary' });
       proceedFunction(workbook);
 
-      let balance = 0;
+      let balance = BigNumber(0);
       this.trades.forEach(trade => {
-        balance += trade.originalValue ?? 0;
+        balance = balance.plus(trade.originalValue ?? 0);
       });
-      console.log('Imported trades balance is', balance);
+      console.log('Imported trades balance is', balance.toFixed(2));
       // show window with imported trades to accept it
 
       this.tradeService.addTrades(this.trades.filter(trade => trade.originalDate));
@@ -68,12 +69,12 @@ export class ImportBybitComponent {
       originalTransactionType: (x) => x['Type'],
       originalDate: (x) => x['Time(UTC)'],
       date: (x) => excelDateToJSDate(x['Time(UTC)']),
-      price: (x) => 1,
+      price: (x) => BigNumber(1),
       brokerAccount: (x) => x['Account'], // TO DO
-      currency: (x) => x['Currency'],
-      originalValue: (x) => Number(x["Cash Flow"]),
-      amount: (x) => Number(x["Cash Flow"]),
-      fee: (x) => Number(x["Fee Paid"]),
+      symbol2: (x) => x['Currency'],
+      originalValue: (x) => BigNumber(x["Cash Flow"]),
+      amount: (x) => BigNumber(x["Cash Flow"]),
+      fee: (x) => BigNumber(x["Fee Paid"]),
       wasDone: (x) => true,
       broker: (x) => 'Bybit',
       transactionType: (originalTransactionType) => {
@@ -105,15 +106,14 @@ export class ImportBybitComponent {
           symbol: (x) => x['Symbol'],
           originalTransactionType: (x) => x['Type'],
           originalDate: (x) => x['Date & Time(UTC)'],
-          price: (x) => Number(x['Open price']),
+          price: (x) => BigNumber(x['Open price']),
           originalComment: (x) => x['Description'],
-          fee: (x) => Number(x['Commission'] ?? 0) + Number(x['Swap'] ?? 0) + Number(x['Rollover'] ?? 0),
-          amount: (x) => Number(x['QTY']),
+          fee: (x) => BigNumber(x['Commission'] ?? BigNumber(0)).plus(BigNumber(x['Swap'] ?? BigNumber(0))).plus(BigNumber(x['Rollover'] ?? BigNumber(0))),
+          amount: (x) => BigNumber(x['QTY']),
           brokerAccount: (x) => x['Account'],
-          currency: (x) => x['Coin'],
-          originalValue: (x) => -1 * (x["Purchase value"] ? Number(x["Purchase value"]) : (Number(x["Margin"]))),
+          symbol2: (x) => x['Coin'],
+          originalValue: (x) => BigNumber(-1).times(x["Purchase value"] ? BigNumber(x["Purchase value"]) : (BigNumber(x["Margin"]))),
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => true,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeBybit(originalTransactionType);

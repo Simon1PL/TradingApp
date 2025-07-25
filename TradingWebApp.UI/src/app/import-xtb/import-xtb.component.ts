@@ -7,6 +7,8 @@ import { NonHeaderField, TradeFieldsMappings, convertDataToTrades } from '../hel
 import { TradesService } from '../services/trades.service';
 import { TransactionType } from '../models/tradeEnums';
 import { excelDateToJSDate } from '../helpers/excelHelper';
+import BigNumber from "bignumber.js";
+import { MyBackendService } from '../services/my-backend.service';
 
 @Component({
   standalone: true,
@@ -18,24 +20,27 @@ import { excelDateToJSDate } from '../helpers/excelHelper';
 export class ImportXTBComponent {
   trades: Trade[] = [];
   error: string = '';
+  leverageTable: string[] = [];
 
-  constructor(private tradeService: TradesService) { }
+  constructor(private tradeService: TradesService, private myBackendService: MyBackendService) { }
 
   onFileChange(event: Event): void {
     const file = (event.target as HTMLInputElement).files![0];
 
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e: any) => {
+      reader.onload = async (e: any) => {
+        this.leverageTable = await this.myBackendService.getXTBLeverageTable();
+
         const binaryString = e.target.result;
         const workbook = XLSX.read(binaryString, { type: 'binary' });
         this.convertExcelDataToTradeModel(workbook);
 
-        let balance = 0;
+        let balance = BigNumber(0);
         this.trades.forEach(trade => {
-          balance += trade.originalValue ?? 0;
+          balance.plus(trade.originalValue ?? BigNumber(0));
         });
-        console.log('Imported trades balance is', balance);
+        console.log('Imported trades balance is', balance.toFixed(2));
         // show window with imported trades to accept it
 
         this.tradeService.addTrades(this.trades.filter(trade => trade.originalDate));
@@ -67,20 +72,27 @@ export class ImportXTBComponent {
           symbol: (x) => x['Symbol'],
           originalTransactionType: (x) => x['Type'],
           originalDate: (x) => x['Open time'],
-          price: (x) => Number(x['Open price']),
+          price: (x) => BigNumber(x['Open price']),
           originalComment: (x) => x['Comment'],
-          fee: (x) => Number(x['Commission'] ?? 0) + Number(x['Swap'] ?? 0) + Number(x['Rollover'] ?? 0),
-          amount: (x) => Number(x['Volume']),
+          fee: (x) => BigNumber(x['Commission'] ?? 0).plus(BigNumber(x['Swap'] ?? 0)).plus(BigNumber(x['Rollover'] ?? 0)),
+          amount: (x) => BigNumber(x['Volume']),
           brokerAccount: (x) => x['Account'],
-          currency: (x) => x['Currency'],
-          originalValue: (x) => -1 * (x["Purchase value"] ? Number(x["Purchase value"]) : (Number(x["Margin"]))),
+          symbol2: (x) => x['Currency'],
+          originalValue: (x) => BigNumber(-1).times(x["Purchase value"] ? BigNumber(x["Purchase value"]) : (BigNumber(x["Margin"]))),
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => true,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);
           },
           date: (x) => excelDateToJSDate(x['Open time']),
+          leverage: (x) => {
+            const isLeverage = x["Margin"] && x["Margin"] !== '0';
+            if (isLeverage) {
+              return BigNumber(this.getLeverageForSymbol(x['Symbol']));
+            }
+
+            return BigNumber(1);
+          },
         };
 
         tradesFromOpenPositions.push(...convertDataToTrades(rows, xtbHeaders, xtbNonHeaderFields, openPositionsMappings));
@@ -94,20 +106,27 @@ export class ImportXTBComponent {
           symbol: (x) => x['Symbol'],
           originalTransactionType: (x) => x['Type'],
           originalDate: (x) => x['Open time'],
-          price: (x) => Number(x['Open price']),
+          price: (x) => BigNumber(x['Open price']),
           originalComment: (x) => x['Comment'],
-          fee: (x) => 0, // its counted in close trade
-          amount: (x) => Number(x['Volume']),
+          fee: (x) => BigNumber(0), // its counted in close trade
+          amount: (x) => BigNumber(x['Volume']),
           brokerAccount: (x) => x['Account'],
-          currency: (x) => x['Currency'],
-          originalValue: (x) => new Function("x", `return ${`-1 * (x["Purchase value"] ? Number(x["Purchase value"]) : Number(x["Margin"]))`}`)(x), // Number(x["PurchaseValue"]) ?? (Number(x["Margin"]) + Number(x["Gross P/L"])),
+          symbol2: (x) => x['Currency'],
+          originalValue: (x) => BigNumber(new Function("x", `return ${`-1 * (x["Purchase value"] ? Number(x["Purchase value"]) : Number(x["Margin"]))`}`)(x)), // using string as a function to test if user can pass it.
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => true,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);
           },
           date: (x) => excelDateToJSDate(x['Open time']),
+          leverage: (x) => {
+            const isLeverage = x["Margin"] && x["Margin"] !== '0';
+            if (isLeverage) {
+              return BigNumber(this.getLeverageForSymbol(x['Symbol']));
+            }
+
+            return BigNumber(1);
+          },
         };
 
         tradesFromClosedPositions.push(...convertDataToTrades(rows, xtbHeaders, xtbNonHeaderFields, closedPositionsOpenMappings));
@@ -117,20 +136,27 @@ export class ImportXTBComponent {
           symbol: (x) => x['Symbol'],
           originalTransactionType: (x) => x['Type'] === 'BUY' ? 'SELL' : x['Type'] === 'SELL' ? 'BUY' : x['Type'],
           originalDate: (x) => x['Close time'],
-          price: (x) => Number(x['Close price']),
+          price: (x) => BigNumber(x['Close price']),
           originalComment: (x) => x['Comment'],
-          fee: (x) => Number(x['Commission'] ?? 0) + Number(x['Swap'] ?? 0) + Number(x['Rollover'] ?? 0),
-          amount: (x) => Number(x['Volume']),
+          fee: (x) => BigNumber(x['Commission'] ?? 0).plus(BigNumber(x['Swap'] ?? 0)).plus(BigNumber(x['Rollover'] ?? 0)),
+          amount: (x) => BigNumber(x['Volume']),
           brokerAccount: (x) => x['Account'],
-          currency: (x) => x['Currency'],
-          originalValue: (x) => x["Sale value"] ? Number(x["Sale value"]) : (Number(x["Margin"]) + Number(x["Gross P/L"])),
+          symbol2: (x) => x['Currency'],
+          originalValue: (x) => x["Sale value"] ? BigNumber(x["Sale value"]) : (BigNumber(x["Margin"]).plus(BigNumber(x["Gross P/L"]))),
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => false,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);
           },
           date: (x) => excelDateToJSDate(x['Close time']),
+          leverage: (x) => {
+            const isLeverage = x["Margin"] && x["Margin"] !== '0';
+            if (isLeverage) {
+              return BigNumber(this.getLeverageForSymbol(x['Symbol']));
+            }
+
+            return BigNumber(1);
+          },
         };
 
         tradesFromClosedPositions.push(...convertDataToTrades(rows, xtbHeaders, xtbNonHeaderFields, closedPositionsCloseMappings));
@@ -144,19 +170,26 @@ export class ImportXTBComponent {
           symbol: (x) => x['Symbol'],
           originalTransactionType: (x) => x['Type'],
           originalDate: (x) => x['Time'],
-          price: (x) => Number(x['Amount']),
+          price: (x) => BigNumber(x['Amount']),
           originalComment: (x) => x['Comment'],
-          amount: (x) => 1,
+          amount: (x) => BigNumber(0),
           brokerAccount: (x) => x['Account'],
-          currency: (x) => x['Currency'],
-          originalValue: (x) => Number(x["Amount"]),
+          symbol2: (x) => x['Currency'],
+          originalValue: (x) => BigNumber(x["Amount"]),
           wasDone: (x) => true,
-          shouldBeOnMinus: (x) => false,
           broker: (x) => 'XTB',
           transactionType: (originalTransactionType) => {
             return this.convertTransactionTypeXTB(originalTransactionType);
           },
           date: (x) => excelDateToJSDate(x['Time']),
+          leverage: (x) => {
+            const isLeverage = x["Margin"] && x["Margin"] !== '0';
+            if (isLeverage) {
+              return BigNumber(this.getLeverageForSymbol(x['Symbol']));
+            }
+
+            return BigNumber(1);
+          },
           skip: (x) => x['Type'] === 'Stock sale' || x['Type'] === 'Stock purchase' || x['Type'] === 'swap' || x['Type'] === 'commision' || x['Type'] === 'rollover' || x['Type'] === 'close trade',
         };
 
@@ -191,5 +224,31 @@ export class ImportXTBComponent {
       default:
         return TransactionType.Unknown;
     }
+  }
+
+  private getLeverageForSymbol(symbol: string): BigNumber {
+    let lastPercentInFile = "";
+    for (const line of this.leverageTable) {
+      if (lastPercentInFile && line.includes(symbol)) {
+        return BigNumber(100).div(BigNumber(lastPercentInFile.replace('%', ''))); // e.g. 25% means 100/25 = 4x leverage
+      }
+
+      const parts = line.split(' ');
+
+      if (parts.length == 1 && parts[0].includes("%")) {
+        lastPercentInFile = parts[0].trim();
+        continue;
+      };
+
+      if (parts.length > 3 && parts[0] === symbol && parts[2].includes(":")) {
+        const stringLeverage = parts[2].trim().replace('(', '').replace(')', ''); // e.g. "1:30", it means 30x leverage
+        const leftSide = BigNumber(stringLeverage.split(':')[0].trim());
+        const rightSide = BigNumber(stringLeverage.split(':')[1].trim());
+        const leverageValue =  rightSide.div(leftSide);
+        return leverageValue;
+      }
+    }
+
+    return BigNumber(1);
   }
 }
