@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Trade } from '../models/tradeModels';
-import { HttpClient } from '@angular/common/http';
 import { InstrumentsService } from './instruments.service';
+import { StockPriceService } from './stock-price.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,9 @@ export class TradesService {
 
   private static readonly tradesLocalStorageKey: string = "trades";
 
-  constructor(private instrumentService: InstrumentsService) {
+  constructor(private instrumentService: InstrumentsService, private stockPriceService: StockPriceService) {
     this.loadTrades();
+    // this.stockPriceService.getPrice('AAPL');
   }
 
   getTrades(): Trade[] {
