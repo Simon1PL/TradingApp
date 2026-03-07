@@ -15,9 +15,9 @@ internal class AzureBlobUploader
     public async Task UploadFileToGoogleDrive(string filePath, string mimeType)
     {
         var accountKey = _configuration["AzureStorage:AccountKey"];
-        var accountName = _configuration["AzureStorage:AccountName"] ?? "storagetradingapp1";
-        var containerName = _configuration["AzureStorage:ContainerName"] ?? "stockhistory";
-        var endpointSuffix = _configuration["AzureStorage:EndpointSuffix"] ?? "core.windows.net";
+        var accountName = _configuration["AzureStorage:AccountName"];
+        var containerName = _configuration["AzureStorage:ContainerName"];
+        var endpointSuffix = _configuration["AzureStorage:EndpointSuffix"];
         string connectionString = $"DefaultEndpointsProtocol=https;AccountName={accountName};AccountKey={accountKey};EndpointSuffix={endpointSuffix}";
         string blobName = Path.GetFileName(filePath);
 
