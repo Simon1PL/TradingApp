@@ -36,7 +36,7 @@ Chcemy przechowywać to lokalnie, ale w przyszłości opcja żeby przechowywać 
 
 # 2. Zbieranie danych
 ## 2.1 Ceny instrumentów
-Dane pobieramy z `https://stooq.com/db/`.
+Dane pobieramy z `https://stooq.com/db/`. `https://stooq.com/db/h` - dane historyczne.
 Projekt StockHistoryImporter --> Stooq --> DataImporter
 Wymagania:
   - System plików do zapisu pobranych danych, więc np odpalanie w lambdzie odpada.

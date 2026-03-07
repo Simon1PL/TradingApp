@@ -2,18 +2,10 @@
 using ExchangeDataHandler.MyData;
 using ExchangeDataHandler.MyData.AzureContainer;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Playwright;
-using Python.Runtime;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using StockHistoryImporter;
 using StockHistoryImporter.Stooq;
-using System.Net.Http.Headers;
-using Tesseract;
 using Trading.Domain.Models.Crypto;
-using System.Linq;
-using System.Collections.Generic;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -22,7 +14,10 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-await DataImporter.ImportUsingPlaywright(DateTimeOffset.UtcNow.AddDays(-1));
+var date = DateTimeOffset.UtcNow.AddDays(-1);
+var directoryWithDownloadedFiles = @"C:\Users\sxz04011\Desktop\Trade\TradingApp\DownloadedData";
+var fileName = $"stooq_{date:yyyy-MM-dd}.csv";
+await DataImporter.ImportUsingPlaywright(date, Path.Combine(directoryWithDownloadedFiles, fileName));
 
 return 0;
 
@@ -32,6 +27,3 @@ await dataWriter.SaveCryptoList(cryptoList.Select(x => new Crypto(x.Symbol, x.Na
 
 //await new CoinmarketcapImporter().Get500CoinsList();
 await new AzureBlobUploader(configuration).UploadFileToGoogleDrive("Files/coinmarketcap_500coins_list.csv", "text/csv");
-
-//https://stooq.com/db/h/
-//https://api.coinmarketcap.com/data-api/v3.1/cryptocurrency/historical?id=1027&timeStart=1648771200&interval=1d&convertId=2781
