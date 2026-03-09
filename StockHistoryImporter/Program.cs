@@ -2,6 +2,7 @@
 using ExchangeDataHandler.MyData;
 using ExchangeDataHandler.MyData.AzureContainer;
 using Microsoft.Extensions.Configuration;
+using Python.Runtime;
 using SixLabors.ImageSharp;
 using StockHistoryImporter;
 using StockHistoryImporter.Stooq;
@@ -14,8 +15,12 @@ var configuration = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
+Runtime.PythonDLL = @"C:\Python311\python311.dll"; // or C:\Python311\ already in PATH on OS
+PythonEngine.Initialize();
+PythonEngine.BeginAllowThreads();
+
 var date = DateTimeOffset.UtcNow.AddDays(-1);
-var directoryWithDownloadedFiles = @"C:\Users\sxz04011\Desktop\Trade\TradingApp\DownloadedData";
+var directoryWithDownloadedFiles = @"C:\Users\sxz04011\Desktop\Trade\TradingApp\DownloadedFiles";
 var fileName = $"stooq_{date:yyyy-MM-dd}.csv";
 await DataImporter.ImportUsingPlaywright(date, Path.Combine(directoryWithDownloadedFiles, fileName));
 

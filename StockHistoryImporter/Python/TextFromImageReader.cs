@@ -1,13 +1,12 @@
-﻿using Python.Runtime;
+﻿namespace StockHistoryImporter.Python;
 
-namespace StockHistoryImporter.MyPlaywright;
+using global::Python.Runtime;
 
 internal static class TextFromImageReader
 {
     public static string ReadTextFromImage(byte[] imageBytes) // using python and easyocr
     {
-        Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", @"C:\Python311\python311.dll"); // it has to be set
-        PythonEngine.Initialize();
+        // It needs python to be initilized. PythonEngine.Initialize(); PythonEngine.BeginAllowThreads();
         var result = "";
         using (Py.GIL())
         {
@@ -22,7 +21,7 @@ internal static class TextFromImageReader
             dynamic kernel = np.ones(new int[] { 2, 2 }, np.uint8);
             dynamic clean = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel);
             
-            cv2.imwrite("preprocessed.png", clean); // Optionally persist preprocessed image for inspection
+            cv2.imwrite("preprocessed.png", clean); // Optionally persist this preprocessed image for inspection
 
             dynamic reader = easyocr.Reader(new string[] { "en" }, gpu: false);
             dynamic ocrResults = reader.readtext(clean);
@@ -35,8 +34,7 @@ internal static class TextFromImageReader
                 Console.WriteLine($"RAW: '{raw}' CONF: {confidence}");
                 result += normalized;
                 if (result.Length == 5) result = result[1..]; // it has a border on the left and top sides, and it is reading it as a letter very often
-                if (result.Length > 4) result = result = normalized;
-                if (result.Length == 4) break;
+                if (result.Length >= 4) break;
             }
         }
 

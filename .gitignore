@@ -1,7 +1,8 @@
 XTB-exports/
 Bybit-exports/
-*/venv/
+StockHistoryImporter/Files/googleKey.json
 *appsettings.Development.json
+*/venv/
 
 /Properties/launchSettings.json
 

@@ -1,7 +1,7 @@
 ﻿namespace StockHistoryImporter.Stooq;
 
 using Microsoft.Playwright;
-using StockHistoryImporter.MyPlaywright;
+using StockHistoryImporter.Python;
 using System.Diagnostics;
 
 internal static class DataImporter
@@ -17,13 +17,12 @@ internal static class DataImporter
         var processInfo = new ProcessStartInfo
         {
             FileName = chromePath,
-            Arguments = $"--remote-debugging-port=9222 --user-data-dir=\"{userDataDir}\" --start-maximized",
-            UseShellExecute = true
+            Arguments = $"--remote-debugging-port=9322 --user-data-dir=\"{userDataDir}\" --start-maximized",
         };
 
-        Process.Start(processInfo);
+        using var browserProcess = Process.Start(processInfo);
         using var playwright = await Playwright.CreateAsync();
-        var browser = await playwright.Chromium.ConnectOverCDPAsync("http://localhost:9222");
+        var browser = await playwright.Chromium.ConnectOverCDPAsync("http://localhost:9322");
         var context = browser.Contexts[0];
         var page = await context.NewPageAsync();
 
@@ -34,8 +33,23 @@ internal static class DataImporter
         await page.ClickAsync($"a:has-text(\"{downloadDailyButtonText}\")", new PageClickOptions { Timeout = DefaultClickTimeout });
         await page.FillCaptcha();
         var cookies = await context.CookiesAsync();
+        // only needed cookies, without this we can get 400 Bad Request from stooq because of too big headers size
+        var neededCookies = new[] { "uid", "FCCDCF", "cookie_uu", "_gid", "__gads", "__gpi", "__eoi", "PHPSESSID", "_ga", "_ga_MLFKCBGX9C", "FCNEC", "privacy" };
+        cookies = [.. cookies.Where(x => neededCookies.Contains(x.Name))];
         var cookieHeader = string.Join("; ", cookies.Select(x => $"{x.Name}={x.Value}"));
+        await page.CloseAsync();
         await browser.CloseAsync();
+        try
+        {
+            browserProcess!.CloseMainWindow();
+            await browserProcess.WaitForExitAsync();
+            browserProcess!.Close();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error closing browser: {ex.Message}");
+            // ignore, browser will be open
+        }
 
         using var http = new HttpClient();
         await SendStooqSetFileContentRequest(http, cookieHeader);
@@ -46,7 +60,6 @@ internal static class DataImporter
     {
         try
         {
-            await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await page.ClickAsync("text=Zgadzam się", new PageClickOptions { Timeout = DefaultClickTimeout });
         }
         catch (TimeoutException)
@@ -83,11 +96,12 @@ internal static class DataImporter
                 throw new Exception($"Captcha filling failed. Read text '{readText}', image '{imagePath}'.");
             }
 
-            await page.ClickAsync("Change code", new PageClickOptions { Timeout = DefaultClickTimeout });
+            await page.ClickAsync("a:has-text(\"Change code\")", new PageClickOptions { Timeout = DefaultClickTimeout });
             await page.FillCaptcha(maxRetries - 1);
         }
 
-        await page.Locator("#cpt_2").Locator("a:has-text(\"Close\")").ClickAsync(new LocatorClickOptions { Timeout = DefaultClickTimeout });
+        if (successTask.IsCompletedSuccessfully)
+            await page.Locator("#cpt_2").Locator("a:has-text(\"Close\")").ClickAsync(new LocatorClickOptions { Timeout = DefaultClickTimeout });
     }
 
     private static async Task SendStooqSetFileContentRequest(HttpClient http, string? cookieHeader = null)
@@ -102,21 +116,23 @@ internal static class DataImporter
 
         request.Content = content;
         var response = await http.SendAsync(request);
-        response.EnsureSuccessStatusCode();
         var bytes = await response.Content.ReadAsByteArrayAsync();
         string text = System.Text.Encoding.UTF8.GetString(bytes);
         Console.WriteLine($"Stooq SetFileContent response: '{text}'");
+        response.EnsureSuccessStatusCode();
     }
 
     private static async Task SendStooqGetDataRequest(DateTimeOffset date, string filePath, HttpClient http, string? cookieHeader = null)
     {
-        var dateString = string.Empty + date.Year + (date.Month + 1) + date.Day;
+        var dateString = date.ToString("yyyyMMdd");
         var request = new HttpRequestMessage(HttpMethod.Get, $"https://stooq.com/db/d/?d={dateString}&t=d");
         request.Headers.Add("Cookie", cookieHeader);
         var response = await http.SendAsync(request);
-        response.EnsureSuccessStatusCode();
         byte[] contentBytes = await response.Content.ReadAsByteArrayAsync();
+        string text = System.Text.Encoding.UTF8.GetString(contentBytes[..Math.Min(contentBytes.Length, 100)]);
+        Console.WriteLine($"Stooq GetData for date '{date:yyyy-MM-dd}' response: '{text}'");
+        response.EnsureSuccessStatusCode();
         await File.WriteAllBytesAsync(filePath, contentBytes);
-        Console.WriteLine($"File for date '{date::yyyy-MM-dd}' downloaded to '{filePath}' (size {contentBytes.Length}).");
+        Console.WriteLine($"File for date '{date:yyyy-MM-dd}' downloaded to '{filePath}' (size {contentBytes.Length}).");
     }
 }
