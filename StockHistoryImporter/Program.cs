@@ -2,11 +2,15 @@
 using ExchangeDataHandler.MyData;
 using ExchangeDataHandler.MyData.AzureContainer;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Python.Runtime;
 using SixLabors.ImageSharp;
 using StockHistoryImporter;
 using StockHistoryImporter.Stooq;
+using System;
 using Trading.Domain.Models.Crypto;
+using Trading.Domain.Repositories;
+using TradingApp.Persistence;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -14,6 +18,20 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables()
     .Build();
+
+var services = new ServiceCollection();
+services.AddInstrumentsPersistenceAndApplyMigrations();
+services.AddSingleton<IConfiguration>(configuration);
+services.AddSingleton<InstrumentsInfoSaver>();
+var provider = services.BuildServiceProvider();
+
+var instrumentsInfoSaver = provider.GetRequiredService<InstrumentsInfoSaver>();
+//await instrumentsInfoSaver.SaveAsync();
+
+var instrumentsBaseInfoRepository = provider.GetRequiredService<IInstrumentsBaseInfoRepository>();
+var instruments = instrumentsBaseInfoRepository.GetAll();
+
+return 0;
 
 Runtime.PythonDLL = @"C:\Python311\python311.dll"; // or C:\Python311\ already in PATH on OS
 PythonEngine.Initialize();

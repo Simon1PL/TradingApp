@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockHistoryImporter", "Sto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExchangeDataHandler", "ExchangeDataHandler\ExchangeDataHandler.csproj", "{12C00121-04A0-4138-9AB9-6D98706F4AA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingApp.Persistence", "TradingApp.Persistence\TradingApp.Persistence.csproj", "{9718C212-28D0-4983-ABB2-6C8A80D7B60A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{12C00121-04A0-4138-9AB9-6D98706F4AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12C00121-04A0-4138-9AB9-6D98706F4AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12C00121-04A0-4138-9AB9-6D98706F4AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9718C212-28D0-4983-ABB2-6C8A80D7B60A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9718C212-28D0-4983-ABB2-6C8A80D7B60A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9718C212-28D0-4983-ABB2-6C8A80D7B60A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9718C212-28D0-4983-ABB2-6C8A80D7B60A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

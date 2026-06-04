@@ -12,6 +12,14 @@
 - [5. Notatki i tier lista spółek, w przyszłości, współdzielenie?](#5-notatki-i-tier-lista-spółek-w-przyszłości-współdzielenie)
 - [Słownik](#słownik)
 
+TO DO
+-Exchange tez jako enum? przeniesc mapping enumów do projektu importera ze stooq?
+-Zapisać dane historyczne (ceny).
+-Pathy zawierające C:\\Users\\sxz04011... fajnie by bylo moc ustawic naraz wszystkie na jakis konkretny folder.
+...
+
+
+
 # 1. Przechowywanie danych 
 ## 1.1 Ceny instrumentów
 Na ten moment pliki, wychodzą najłatwiej i najtaniej
@@ -19,7 +27,7 @@ Folder `database`:
   -  `availableTickers.txt` - plik z wszytskimi wspieranymi tickerami, zawiera dwie kolumny, `ticker` oraz `instrumentId`.
   -  `instruments`:
     - `basicInfo`:
-      - `<INSTRUMENT_ID>.txt` - plik z podstawowymi informacjami o danym instrumencie, zawiera kolumny `instrumentId`, `ticker`, `name`, `country`, `shortDescription`.
+      - `<INSTRUMENT_ID>.txt` - plik z podstawowymi informacjami o danym instrumencie, zawiera kolumny `instrumentId`, `ticker`, `name`, `country`, `exchange`, `type`.
     - `details`:
       - `<INSTRUMENT_ID>.txt` - plik z szczegółowymi informacjami o danym instrumencie, zawiera kolumny `instrumentId`, `ticker`, `name`, `country`, `shortDescription`, `longDescription`, `categories` i wiele więcej.
   - `dailyPriceHistory` - w przyszłości podział na lata (że foldery 2025, 2026...), na ten moment niepotrzebne:
@@ -35,6 +43,9 @@ Folder `database`:
 Chcemy przechowywać to lokalnie, ale w przyszłości opcja żeby przechowywać to zdalnie dla chętnych. Lokalnie znaczy ze wczytujemy plik do pamięci przeglądarki? Przeglądarka moze zapisywać lokalnie pliki a nie w pamięci? Na telefonie zadziała?
 
 # 2. Zbieranie danych
+## 2.0 DB Migrations
+`dotnet tool install --global dotnet-ef --version 9.0.16 --verbosity diag --ignore-failed-sources`
+`dotnet ef migrations add <migration_name>`
 ## 2.1 Ceny instrumentów
 Dane pobieramy z `https://stooq.com/db/`. `https://stooq.com/db/h` - dane historyczne.
 Projekt StockHistoryImporter --> Stooq --> DataImporter

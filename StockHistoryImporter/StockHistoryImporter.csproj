@@ -12,10 +12,11 @@
     <PackageReference Include="Google.Apis.Auth" Version="1.71.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.71.0.3905" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.16" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.16" />
     <PackageReference Include="Microsoft.Playwright" Version="1.56.0" />
     <PackageReference Include="pythonnet" Version="3.0.5" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
@@ -25,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ExchangeDataHandler\ExchangeDataHandler.csproj" />
     <ProjectReference Include="..\TradingApp.Domain\Trading.Domain.csproj" />
+    <ProjectReference Include="..\TradingApp.Persistence\TradingApp.Persistence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
